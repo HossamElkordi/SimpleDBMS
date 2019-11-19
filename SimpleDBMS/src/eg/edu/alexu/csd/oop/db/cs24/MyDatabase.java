@@ -19,5 +19,5 @@ public class MyDatabase implements Database {
 	public int executeUpdateQuery(String query) throws SQLException {
 		return 0;
 	}
-
+	
 }

@@ -10,6 +10,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 import java.awt.event.ActionEvent;
 import java.awt.Font;
 
@@ -17,6 +18,8 @@ public class GuiClass {
 
 	private JFrame frame;
 	private JTable table;
+	
+	private CommandChecker comCheck;
 	
 	private String command = "";
 
@@ -39,6 +42,7 @@ public class GuiClass {
 	 * Create the application.
 	 */
 	public GuiClass() {
+		comCheck = new CommandChecker();
 		initialize();
 	}
 
@@ -56,7 +60,7 @@ public class GuiClass {
 		tableScrollPane.setBounds(260, 11, 346, 399);
 		frame.getContentPane().add(tableScrollPane);
 		
-		table = new JTable();
+		table = new JTable(comCheck.getColumnsNames(), comCheck.getDataSet());
 		tableScrollPane.setViewportView(table);
 		
 		setCommand();
@@ -95,7 +99,11 @@ public class GuiClass {
 		JButton btnEnter = new JButton("Enter");
 		btnEnter.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.out.println(command);
+				try {
+					comCheck.directCommand(command);
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
 				command = "";
 			}
 		});

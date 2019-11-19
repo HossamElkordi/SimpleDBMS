@@ -33,6 +33,10 @@ public class Table {
 		return name;
 	}
 	
+	public ArrayList<Column<?>> getColumns() {
+		return columns;
+	}
+	
 	@SuppressWarnings("unchecked")
 	public void addRecord(HashMap<String, String> record) {
 		Set<?> set = record.entrySet();
@@ -52,8 +56,7 @@ public class Table {
 			e.printStackTrace();
 		}
 	}
-	
-
+		
 	private Column<?> getColumnByName(String name) {
 		for (Column<?> column : this.columns) {
 			if(column.getName().equals(name)) {

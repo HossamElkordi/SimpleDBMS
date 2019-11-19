@@ -31,7 +31,7 @@ public class Parser {
 	//7 insert
 
 	public int typechecker(String input){
-		Pattern pattern = Pattern.compile("[A-za-z]*");
+		Pattern pattern = Pattern.compile("[A-Za-z]*");
 		String value;
 		ArrayList<String> a=new ArrayList<>();
 		Matcher matcher=pattern.matcher(input);
