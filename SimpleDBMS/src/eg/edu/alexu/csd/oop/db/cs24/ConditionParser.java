@@ -5,23 +5,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ConditionParser {
-	
-	private static final String COMPTOSTRING_REGEX = "[A-Za-z]+";
-	private static final String COMP_REGEX = "[[\\>\\<\\=]" + "[\\=]]";
-	private static final String COMPTOINT_REGEX = "[0-9]+";
-	private static final String CONDITION_REGEX = COMPTOSTRING_REGEX + COMP_REGEX + "[" + COMPTOSTRING_REGEX + COMPTOINT_REGEX + "]?";
-	private static final String FORMULA_REGEX = CONDITION_REGEX + "[" + COMPTOSTRING_REGEX + CONDITION_REGEX + "]*";
-	
-	private Pattern stringEx;
-	private Pattern intEx;
-	private Pattern compEx;
-	
+
 	private static ConditionParser cp;
-	
+
+	Pattern mainPattern=Pattern.compile("");
+
 	private ConditionParser() {
-		stringEx = Pattern.compile(COMPTOSTRING_REGEX);
-		intEx = Pattern.compile(COMPTOINT_REGEX);
-		compEx = Pattern.compile(COMP_REGEX);
+
 	}
 
 	public static ConditionParser getInstance() {
@@ -30,50 +20,75 @@ public class ConditionParser {
 		}
 		return cp;
 	}
-	
-	public ArrayList<String> split(String condition) {
-		ArrayList<String> cond = new ArrayList<String>();
-		
-		if(Pattern.matches(FORMULA_REGEX, condition)) {
-			
-			Matcher matchString = stringEx.matcher(condition);
-			Matcher matchInt = intEx.matcher(condition);
-			Matcher matchComp = compEx.matcher(condition);
-			
-			while(true) {
-				getOneCondition(cond, matchString, matchInt, matchComp);
-				
-//				if(condition.contains("or") || condition.contains("and") || condition.contains("not")) {
-//					String s = matchString.group().toLowerCase();
-//					if(s.equals("or") || s.equals("and") || s.equals("not")) {
-//						cond.add(s);
-//					}
-//				}else {
-//					break;
-//				}
-				
+	private boolean isCompartor(Character checked){
+		if(checked=='>'||checked=='<'||checked=='='){return true;}
+		else return false;
+	}
+	public ArrayList<String> noregexparser(String input){
+		ArrayList<String> output=new ArrayList<>();
+		int i=0,istart;
+		while(i<input.length()) {
+			while (input.charAt(i) == ' ') {
+				i++;
 			}
+			if (Character.isDigit(input.charAt(i)) || Character.isLetter(input.charAt(i))) {
+				istart = i;
+				while (!isCompartor(input.charAt(i)) && input.charAt(i) != ' ') {
+
+					if (i == input.length() - 1) {
+						output.add(input.substring(istart));
+						i++;
+						break;
+					}
+					i++;
+				}
+				if(i<input.length()) output.add(input.substring(istart, i));
+			} else {
+				istart = i;
+				while (isCompartor(input.charAt(i))) {
+					if (i == input.length() - 1) {
+						output.add(input.substring(istart, i));
+						i++;
+						break;
+					}
+					i++;
+
+				}
+				if(i<input.length()) output.add(input.substring(istart, i));
+			}
+
 		}
-		
-		return cond;
+		if(conditionChecker(output))return output;
+		return null;
 	}
 
-	private void getOneCondition(ArrayList<String> cond, Matcher matchString, Matcher matchInt, Matcher matchComp) {
-		while(matchString.find()) {
-			cond.add(matchString.group());
-			break;
+	private boolean smallCondtioncheck(ArrayList a){
+		if(a.get(1).equals("<")||a.get(1).equals(">")||a.get(1).equals("==")||a.get(1).equals("<=")||a.get(1).equals(">=")){
+			if(a.get(0)==null||a.get(2)==null){return false;}
+			return true;
 		}
-		while(matchComp.find()) {
-			cond.add(matchComp.group());
-			break;
-		}
-		while(matchInt.find()) {
-			cond.add(matchInt.group());
-			break;
-		}
-		while(matchString.find()) {
-			cond.add(matchString.group());
-			break;
-		}
+		return false;
 	}
+	ArrayList<String> sublist(ArrayList<String> input,int start,int finish){
+		ArrayList<String> op=new ArrayList();
+		while(start<finish){
+			op.add(input.get(start));
+			start++;
+		}
+		return op;
+	}
+
+	boolean conditionChecker(ArrayList a){
+		if(a.size()<3)return false;
+		int i=0;
+		while(i<a.size()){
+			if(!smallCondtioncheck(sublist(a,i,i+3)))return false;
+			if(i+3<a.size()&&!a.get(i+3).equals("and")&&!a.get(i+3).equals("or")){return false;}
+			i=i+4;
+
+		}
+		return true;
+
+	}
+
 }
