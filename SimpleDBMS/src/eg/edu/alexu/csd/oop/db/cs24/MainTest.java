@@ -11,8 +11,8 @@ static Parser a=Parser.getInstace();
 		ConditionParser cp = ConditionParser.getInstance();
 		ArrayList<String> condition = new ArrayList<String>();
 		ArrayList<String> reps = new ArrayList<String>();
-		condition.add("x"); condition.add(">"); condition.add("3"); condition.add("or"); condition.add("y"); condition.add("="); condition.add("7");
-		reps.add("1"); reps.add("7");
+		condition.add("x"); condition.add("="); condition.add("x"); condition.add("or"); condition.add("y"); condition.add(">="); condition.add("7");
+		reps.add("y"); reps.add("7");
 		System.out.println(cp.evaluate(condition, reps));
 	}
 

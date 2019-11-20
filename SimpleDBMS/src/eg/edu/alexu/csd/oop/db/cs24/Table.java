@@ -95,7 +95,7 @@ public class Table {
 			Node column = doc.getElementById(m.getKey());
 			NodeList colList = column.getChildNodes();
 			for (int i = 0; i < colList.getLength(); i++) {
-				for (int j = 0; j < reps.size(); i++) {
+				for (int j = 0; j < colsNeeded.size(); j++) {
 					reps.add((getColumnByName(colsNeeded.get(j)).getElements().get(i)).toString());
 				}
 				if(cp.evaluate(condition, reps)) {
@@ -106,7 +106,7 @@ public class Table {
 			Column<?> col = getColumnByName(m.getKey());
 			ArrayList<?> elements = col.getElements();
 			for (Iterator<?> iterator = elements.iterator(); iterator.hasNext();) {
-				for (int i = 0; i < reps.size(); i++) {
+				for (int i = 0; i < colsNeeded.size(); i++) {
 					reps.add((getColumnByName(colsNeeded.get(i)).getElements().get(elements.indexOf(iterator.next()))).toString());
 				}
 				if(cp.evaluate(condition, reps)) {
