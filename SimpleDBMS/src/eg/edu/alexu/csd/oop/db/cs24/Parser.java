@@ -70,12 +70,13 @@ public class Parser {
             }
 
         }
-        if(a.size()<2) return null;
+        if(a.size()!=2) return null;
         else return a.get(1);
 
     }
-    ArrayList<String > fieldArraygetter(String in){
+    private ArrayList<String > fieldArraygetter(String in){
         in=in.replace(","," , ");
+        in=in.replace("="," = ");
 	    Pattern p=Pattern.compile("[^\\s]*");
         ArrayList<String> a=new ArrayList<>();
         Matcher matcher=p.matcher(in);
@@ -88,7 +89,7 @@ public class Parser {
         ArrayList<String> output=new ArrayList<>();
         int i=0;
         while (i<a.size()){
-            if(a.get(i).equals("=")){
+            if(a.get(i).equals("=")){if(i==0||i==a.size()-1){return null;}
                 output.add(a.get(i-1)+a.get(i)+a.get(i+1));
                 i=i+2;
             }
@@ -97,8 +98,40 @@ public class Parser {
         return output;
     }
 
+    private ArrayList<String > selectquery(String in){
+        in=in.replace(","," , ");
+        Pattern p=Pattern.compile("[^\\s]*");
+        ArrayList<String> a=new ArrayList<>();
+        Matcher matcher=p.matcher(in);
+        while (matcher.find()) {String j=matcher.group();
+            if(!j.equals("")){
+                a.add(j);
+            }
 
-	public Map<String,Object> updateQueryParser(String input){ConditionParser cp=ConditionParser.getInstance();
+        }
+        ArrayList<String> output=new ArrayList<>();
+        int i=1;
+        while(i<a.size()){
+            if(a.get(1).equals("*")){
+                output.add("*");
+                if(a.size()>2){return null;}
+                else return output;
+            }
+            else{
+                if(!a.get(i).equals(",")) {
+                    output.add(a.get(i));
+                }
+                i++;
+            }
+        }
+        return output;
+    }
+
+
+	public Map<String,Object> updateQueryParser(String input){
+        if(input.charAt(input.length()-1)!=';'){return null;}
+        else{input=input.substring(0,input.length()-1);}
+	    ConditionParser cp=ConditionParser.getInstance();
         Map<String,Object> output=new HashMap<>();
         int i=0,conditioni,seti,updatei;
         updatei=input.toLowerCase().indexOf("update");
@@ -110,16 +143,42 @@ public class Parser {
         ArrayList<String> fieldarray=new ArrayList<>();
         if(conditioni!=-1){fieldarray=fieldArraygetter(input.substring(seti,conditioni));}
         else{fieldarray=fieldArraygetter(input.substring(seti));}
-        while(i<fieldarray.size()){
+        while(i<fieldarray.size()){if(fieldarray==null)return null;
             output.put(fieldarray.get(i).substring(0,fieldarray.get(i).indexOf('=')).replace(" ",""),fieldarray.get(i).substring(fieldarray.get(i).indexOf('=')));
             i++;
         }
         if(conditioni==-1){output.put("condition",null);}
-        else{output.put("condition",cp.noregexparser(input.substring(conditioni+5)));}
+        else{if(cp.noregexparser(input.substring(conditioni+5))==null){return null;}
+            output.put("condition",cp.noregexparser(input.substring(conditioni+5)));}
         return output;
 
 
 
     }
+    public Map<String,Object> selectQueryParser(String input){ConditionParser cp=ConditionParser.getInstance();
+       if(input.charAt(input.length()-1)!=';'){return null;}
+       else{input=input.substring(0,input.length()-1);}
+        Map<String,Object> output=new HashMap<>();
+        int selecti,fromi,conditioni;
+        selecti=input.toLowerCase().indexOf("select");
+        if(!input.toLowerCase().contains("from")){return  null;}
+        else{fromi=input.toLowerCase().indexOf("from");}
+        if(!input.toLowerCase().contains("where")){conditioni=-1;}
+        else{conditioni=input.toLowerCase().indexOf("where");}
+        if(selectquery(input.substring(selecti,fromi))==null)return null;
+        output.put("fields",selectquery(input.substring(selecti,fromi)));
+        String tablename;
+        if(conditioni==-1){
+            tablename=namegetter(input.substring(fromi));
+        }
+        else{tablename=namegetter(input.substring(fromi,conditioni));}
+        if(tablename==null)return null;
+        else{output.put("tablename",tablename);}
+        if(conditioni==-1){output.put("condition",null);}
+        else{if(cp.noregexparser(input.substring(conditioni+5))==null){return null;}
+            output.put("condition",cp.noregexparser(input.substring(conditioni+5)));}
+        return output;
+    }
+
 		
 }
