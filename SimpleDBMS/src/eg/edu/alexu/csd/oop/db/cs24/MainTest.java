@@ -8,12 +8,12 @@ public class MainTest {
 static Parser a=Parser.getInstace();
 
 	public static void main(String[] args) {
-		Map<String,Object> z=a.updateQueryParser("UPDATE table_name\n" +
-                "SET column1 = value1, column2 = value2, ...\n" +
-        "WHERE condition;");
-        System.out.println("d");
-
-
+		ConditionParser cp = ConditionParser.getInstance();
+		ArrayList<String> condition = new ArrayList<String>();
+		ArrayList<String> reps = new ArrayList<String>();
+		condition.add("x"); condition.add(">"); condition.add("3"); condition.add("or"); condition.add("y"); condition.add("="); condition.add("7");
+		reps.add("1"); reps.add("7");
+		System.out.println(cp.evaluate(condition, reps));
 	}
 
 }
