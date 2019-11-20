@@ -63,7 +63,8 @@ public class ConditionParser {
 	}
 
 	private boolean smallCondtioncheck(ArrayList a){
-		if(a.get(1).equals("<")||a.get(1).equals(">")||a.get(1).equals("==")||a.get(1).equals("<=")||a.get(1).equals(">=")){
+	    a.set(1,((String)a.get(1)).replace(" ",""));
+		if(a.get(1).equals("<")||a.get(1).equals(">")||a.get(1).equals("=")||a.get(1).equals("<=")||a.get(1).equals(">=")){
 			if(a.get(0)==null||a.get(2)==null){return false;}
 			return true;
 		}
