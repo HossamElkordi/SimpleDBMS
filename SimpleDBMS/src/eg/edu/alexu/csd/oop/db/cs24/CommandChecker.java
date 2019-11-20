@@ -6,14 +6,14 @@ public class CommandChecker {
 	
 	private MyDatabase db;
 	
-	public CommandChecker() {
-		db = new MyDatabase();
-	}
-
-	private Object[][] dataSet;
 	private Object[][] columnsNames;
+	private Object[][] dataSet;
 	
 	private int rowNum = 0;
+	
+	public CommandChecker() {
+		db = new MyDatabase();		
+	}
 	
 	public void directCommand(String command) throws SQLException {		
 		command = command.toLowerCase();

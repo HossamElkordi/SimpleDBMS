@@ -25,6 +25,10 @@ public class Column<T> {
 		elements.add(element);
 	}
 	
+	public void set(int index, T element) {
+		elements.set(index, element);
+	}
+	
 	public Class<?> getType() {
 		ParameterizedType type = (ParameterizedType)getClass().getGenericSuperclass();
 		return (Class<?>)type.getActualTypeArguments()[0];

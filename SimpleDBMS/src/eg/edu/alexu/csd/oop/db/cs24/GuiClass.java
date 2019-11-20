@@ -1,5 +1,10 @@
 package eg.edu.alexu.csd.oop.db.cs24;
 
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.SQLException;
+
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
@@ -8,16 +13,14 @@ import javax.swing.JTextArea;
 import javax.swing.UIManager;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.text.BadLocationException;
-import java.awt.event.ActionListener;
-import java.sql.SQLException;
-import java.awt.event.ActionEvent;
-import java.awt.Font;
 
 public class GuiClass {
 
 	private JFrame frame;
 	private JTable table;
+	private DefaultTableModel model;
 	
 	private CommandChecker comCheck;
 	
@@ -60,10 +63,30 @@ public class GuiClass {
 		tableScrollPane.setBounds(260, 11, 346, 399);
 		frame.getContentPane().add(tableScrollPane);
 		
-		table = new JTable(comCheck.getColumnsNames(), comCheck.getDataSet());
+		model = new DefaultTableModel();
+		setTableModel();
+		table = new JTable();
+		table.setModel(model);
 		tableScrollPane.setViewportView(table);
 		
 		setCommand();
+	}
+
+	private void setTableModel() {
+		int count = model.getRowCount();
+		for (int i = 0; i < count; i++) {
+			model.removeRow(0);
+		}
+		Object[][] colName = comCheck.getColumnsNames();
+		String[] st = new String[colName[0].length];
+		for (int i = 0; i < colName[0].length; i++) {
+			st[i] = (String)colName[0][i];
+		}
+		model.setColumnIdentifiers(st);
+		Object[][] data = comCheck.getDataSet();
+		for (int i = 0; i < data.length; i++) {
+			model.addRow(data[i]);
+		}
 	}
 
 	private void setCommand() {
@@ -101,6 +124,7 @@ public class GuiClass {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					comCheck.directCommand(command);
+					setTableModel();
 				} catch (SQLException e1) {
 					e1.printStackTrace();
 				}
