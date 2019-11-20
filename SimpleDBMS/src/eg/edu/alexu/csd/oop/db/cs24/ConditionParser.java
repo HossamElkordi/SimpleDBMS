@@ -25,7 +25,7 @@ public class ConditionParser {
 		else return false;
 	}
 	public ArrayList<String> noregexparser(String input){
-		ArrayList<String> output=new ArrayList<>();
+		ArrayList<String> output = new ArrayList<String>();
 		int i=0,istart;
 		while(i<input.length()) {
 			while (input.charAt(i) == ' ') {
@@ -62,8 +62,8 @@ public class ConditionParser {
 		return null;
 	}
 
-	private boolean smallCondtioncheck(ArrayList a){
-	    a.set(1,((String)a.get(1)).replace(" ",""));
+	private boolean smallCondtioncheck(ArrayList<String> a){
+	    a.set(1,a.get(1).replace(" ",""));
 		if(a.get(1).equals("<")||a.get(1).equals(">")||a.get(1).equals("=")||a.get(1).equals("<=")||a.get(1).equals(">=")){
 			if(a.get(0)==null||a.get(2)==null){return false;}
 			return true;
@@ -71,7 +71,7 @@ public class ConditionParser {
 		return false;
 	}
 	ArrayList<String> sublist(ArrayList<String> input,int start,int finish){
-		ArrayList<String> op=new ArrayList();
+		ArrayList<String> op = new ArrayList<String>();
 		while(start<finish){
 			op.add(input.get(start));
 			start++;
@@ -79,7 +79,7 @@ public class ConditionParser {
 		return op;
 	}
 
-	boolean conditionChecker(ArrayList a){
+	boolean conditionChecker(ArrayList<String> a){
 		if(a.size()<3)return false;
 		int i=0;
 		while(i<a.size()){
@@ -90,6 +90,11 @@ public class ConditionParser {
 		}
 		return true;
 
+	}
+
+	public boolean evaluate(ArrayList<String> condition, ArrayList<String> reps) {
+		
+		return false;
 	}
 
 }

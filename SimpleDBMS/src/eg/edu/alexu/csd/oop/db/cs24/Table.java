@@ -62,7 +62,7 @@ public class Table {
 			while (iter.hasNext()) {
 				Map.Entry<String, String> m = (Map.Entry<String, String>) iter.next();
 				// add in xml file
-				Node column = doc.getElementsByTagName(m.getKey()).item(0);
+				Node column = doc.getElementById(m.getKey());
 				Element newElement = (Element) doc.appendChild(doc.createTextNode(m.getValue()));
 				column.appendChild(newElement);
 				// add in the table itself
@@ -92,7 +92,7 @@ public class Table {
 		while(iter.hasNext()) {
 			Map.Entry<String, String> m = (Map.Entry<String, String>) iter.next();
 			// update from xml
-			Node column = doc.getElementsByTagName(m.getKey()).item(0);
+			Node column = doc.getElementById(m.getKey());
 			NodeList colList = column.getChildNodes();
 			for (int i = 0; i < colList.getLength(); i++) {
 				for (int j = 0; j < reps.size(); i++) {
