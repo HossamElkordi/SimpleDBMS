@@ -36,9 +36,9 @@ public class Table {
 		while (iter.hasNext()) {
 			Map.Entry<String, String> m = (Map.Entry<String, String>) iter.next();
 			if(m.getValue().equals("int")) {
-				this.columns.add(new Column<Integer>(m.getKey()));
+				this.columns.add(new Column<Integer>(m.getKey(), Integer.class));
 			}else {
-				this.columns.add(new Column<String>(m.getKey()));
+				this.columns.add(new Column<String>(m.getKey(), String.class));
 			}
 		}
 	}
@@ -107,15 +107,18 @@ public class Table {
 			// update in the table itself
 			Column<?> col = getColumnByName(m.getKey());
 			ArrayList<?> elements = col.getElements();
-			for (Iterator<?> iterator = elements.iterator(); iterator.hasNext();) {
-				for (int i = 0; i < colsNeeded.size(); i++) {
-					reps.add((getColumnByName(colsNeeded.get(i)).getElements().get(elements.indexOf(iterator.next()))).toString());
+			for(Object column1 : elements) {
+				for(int i = 0; i < reps.size(); i++) {
+					reps.remove(0);
 				}
-				if(cp.evaluate(condition, reps)) {
+				for (int i = 0; i < colsNeeded.size(); i++) {
+					reps.add((getColumnByName(colsNeeded.get(i)).getElements().get(elements.indexOf(column1))).toString());
+				}
+				if(cp.evaluate((ArrayList<String>) condition.clone(), reps)) {
 					if(col.getType().getSimpleName().equals("Integer")) {
-						((Column<Integer>)col).set(elements.indexOf(iterator.next()),Integer.parseInt(m.getValue()));
+						((Column<Integer>)col).set(elements.indexOf(column1),Integer.parseInt(m.getValue()));
 					}else {
-						((Column<String>)col).set(elements.indexOf(iterator.next()),m.getValue());
+						((Column<String>)col).set(elements.indexOf(column1),m.getValue());
 					}
 				}
 			}

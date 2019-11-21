@@ -7,8 +7,10 @@ public class Column<T> {
 
 	private String name;
 	private ArrayList<T> elements;
+	private final Class<T> parameterType;
 	
-	public Column(String name) {
+	public Column(String name, Class<T> type) {
+		this.parameterType = type;
 		this.name = name;
 		this.elements = new ArrayList<T>();
 	}
@@ -30,8 +32,7 @@ public class Column<T> {
 	}
 	
 	public Class<?> getType() {
-		ParameterizedType type = (ParameterizedType)getClass().getGenericSuperclass();
-		return (Class<?>)type.getActualTypeArguments()[0];
+		return this.parameterType;
 	}
 	
 }
