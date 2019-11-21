@@ -67,7 +67,7 @@ public class XML {
                 Transformer tr = TransformerFactory.newInstance().newTransformer();
                 tr.setOutputProperty(OutputKeys.INDENT, "yes");
                 tr.setOutputProperty(
-                        OutputKeys.DOCTYPE_SYSTEM, path.substring(path.lastIndexOf('\\'),path.indexOf(".xml"))+".dtd");
+                        OutputKeys.DOCTYPE_SYSTEM, path.substring(path.lastIndexOf('\\')+1,path.indexOf(".xml"))+".dtd");
                 tr.transform(new DOMSource(dom),
                         new StreamResult(new FileOutputStream(path)));
                 CreateDTD(table,path);
