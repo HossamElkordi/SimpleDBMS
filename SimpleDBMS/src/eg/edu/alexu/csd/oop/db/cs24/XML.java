@@ -52,13 +52,6 @@ public class XML {
                     e.setAttribute("type","varchar");
                 else
                     e.setAttribute("type","int");
-                ArrayList<?>elements=columns.get(i).getElements();
-                for (Object element : elements) {
-                    Element DataCell = dom.createElement("Data");
-                    DataCell.appendChild(dom.createTextNode(element.toString()));
-                    e.appendChild(DataCell);
-                }
-
             }
             rootEle.appendChild(e);
             dom.appendChild(rootEle);
