@@ -2,6 +2,8 @@ package eg.edu.alexu.csd.oop.db.cs24;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -17,6 +19,7 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class XML {
 
@@ -45,12 +48,15 @@ public class XML {
             {
                 e = dom.createElement(columns.getClass().getName());
                 e.setAttribute("id",columns.get(i).getName());
+                if(columns.get(i).getType().getSimpleName().equals("String"))
+                    e.setAttribute("type","varchar");
+                else
+                    e.setAttribute("type","int");
                 ArrayList<?>elements=columns.get(i).getElements();
-                for(int j=0;j<elements.size();++j)
-                {
-                    Element NumberOfCell=dom.createElement(String.valueOf(j));
-                    NumberOfCell.appendChild(dom.createTextNode(elements.get(j).toString()));
-                    e.appendChild(NumberOfCell);
+                for (Object element : elements) {
+                    Element DataCell = dom.createElement("Data");
+                    DataCell.appendChild(dom.createTextNode(element.toString()));
+                    e.appendChild(DataCell);
                 }
 
             }
@@ -77,33 +83,63 @@ public class XML {
     {
         //http://edutechwiki.unige.ch/en/DTD_tutorial
         try {
-            path.replace("xml","dtd");
-            int MaxNumberOfRows=0;
+            path=path.replace("xml","dtd");
             File ff = new File(path);
             System.out.println(ff.createNewFile());
             FileWriter fw = new FileWriter(ff);
             fw.write("<!ELEMENT " + table.getName() + "("+table.getColumns().getClass().getName()+"+)>\n");
-            ArrayList<Column<?>> columns=table.getColumns();
-            for(int i=0;i<columns.size();++i)
-            {
-                fw.write("<!ELEMENT"+table.getColumns().getClass().getName()+"(");
-                ArrayList<?>elements=columns.get(i).getElements();
-                for(int j=0;j<elements.size();++j)
-                {
-                   fw.write(j);
-                   MaxNumberOfRows=Math.max(MaxNumberOfRows,j);
-                   if(j!=elements.size()-1)
-                       fw.write(",");
-                }
-                fw.write(")>\n");
-            }
-            fw.write("<!ATTLIST"+table.getColumns().getClass().getName()+ "id ID #REQUIRED");
-            for(int i=0;i<=MaxNumberOfRows;++i)
-                fw.write("<!ELEMENT"+i+"(#PCDATA)");
-            fw.write(")>\n");
+            fw.write("<!ELEMENT"+table.getColumns().getClass().getName()+"(Data+)>\n");
+            fw.write("<!ATTLIST"+table.getColumns().getClass().getName()+ "id ID #REQUIRED\n");
+            fw.write("<!ATTLIST"+table.getColumns().getClass().getName()+ " type #REQUIRED\n");
+            fw.write("<!ELEMENT Data (#PCDATA)>\n");
             fw.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public Table LoadTable(String path)
+    {
+        Table table=null;
+        try {
+            File fXmlFile = new File(path);
+            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+            Document doc = dBuilder.parse(fXmlFile);
+            doc.getDocumentElement().normalize();
+            Element root = doc.getDocumentElement();
+            HashMap<String,String> ColumnsData=new HashMap<>();
+            NodeList nList = doc.getElementsByTagName(Column.class.getName());
+            for(int i=0;i<nList.getLength();++i)
+            {
+                Node node=nList.item(i);
+                if (node.getNodeType() == Node.ELEMENT_NODE)
+                {
+                    Element eElement = (Element) node;
+                    ColumnsData.put(eElement.getAttribute("id"),eElement.getAttribute("type"));
+                }
+            }
+            table=new Table(root.getNodeName(),ColumnsData);
+            for(HashMap.Entry<String,String> entry: ColumnsData.entrySet())
+            {
+                Column<?>column=table.getColumnByName(entry.getKey());
+                nList = doc.getElementById(entry.getKey()).getChildNodes();
+                for (int i = 0; i < nList.getLength(); ++i)
+                {
+                    Node node = nList.item(i);
+                    if (node.getNodeType() == Node.ELEMENT_NODE)
+                    {
+                        Element eElement = (Element) node;
+                        if(entry.getValue().equals("int"))
+                            column.add(Integer.parseInt(eElement.getTextContent()));
+                        else
+                            column.add(eElement.getTextContent());
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return table;
     }
 }
