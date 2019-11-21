@@ -1,6 +1,5 @@
 package eg.edu.alexu.csd.oop.db.cs24;
 
-import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 
 public class Column<T> {
