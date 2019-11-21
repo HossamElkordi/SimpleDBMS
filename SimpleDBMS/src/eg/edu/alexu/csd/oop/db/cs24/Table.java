@@ -1,5 +1,6 @@
 package eg.edu.alexu.csd.oop.db.cs24;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -63,8 +64,9 @@ public class Table {
 				Map.Entry<String, String> m = (Map.Entry<String, String>) iter.next();
 				// add in xml file
 				Node column = doc.getElementById(m.getKey());
-				Element newElement = (Element) doc.appendChild(doc.createTextNode(m.getValue()));
-				column.appendChild(newElement);
+				Element DataCell = doc.createElement("Data");
+				DataCell.appendChild(doc.createTextNode(m.getValue()));
+				column.appendChild(DataCell);
 				// add in the table itself
 				Column<?> col = getColumnByName(m.getKey());
 				if(col.getType().getSimpleName().equals("Integer")) {
@@ -130,12 +132,13 @@ public class Table {
 	}
 	
 	private Document getDocument(String path) {
-		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-		DocumentBuilder db = null;
-		Document doc = null;
+		Document doc=null;
 		try {
-			db = dbf.newDocumentBuilder();
-			doc = db.parse(path);
+			File fXmlFile = new File(path);
+			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+			doc = dBuilder.parse(fXmlFile);
+			doc.getDocumentElement().normalize();
 		} catch (ParserConfigurationException | SAXException | IOException e) {
 			e.printStackTrace();
 		}

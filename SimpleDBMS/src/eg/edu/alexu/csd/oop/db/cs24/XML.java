@@ -88,7 +88,7 @@ public class XML {
             System.out.println(ff.createNewFile());
             FileWriter fw = new FileWriter(ff);
             fw.write("<!ELEMENT " + table.getName() + "("+table.getColumns().getClass().getName()+"+)>\n");
-            fw.write("<!ELEMENT"+table.getColumns().getClass().getName()+"(Data+)>\n");
+            fw.write("<!ELEMENT"+table.getColumns().getClass().getName()+"(Data?)>\n");
             fw.write("<!ATTLIST"+table.getColumns().getClass().getName()+ "id ID #REQUIRED\n");
             fw.write("<!ATTLIST"+table.getColumns().getClass().getName()+ " type #REQUIRED\n");
             fw.write("<!ELEMENT Data (#PCDATA)>\n");
