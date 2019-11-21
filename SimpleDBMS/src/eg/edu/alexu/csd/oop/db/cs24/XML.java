@@ -98,7 +98,8 @@ public class XML {
         }
     }
 
-    public Table LoadTable(String path)
+    @SuppressWarnings("unchecked")
+	public Table LoadTable(String path)
     {
         Table table=null;
         try {
@@ -130,10 +131,10 @@ public class XML {
                     if (node.getNodeType() == Node.ELEMENT_NODE)
                     {
                         Element eElement = (Element) node;
-                        /*if(entry.getValue().equals("int"))
-                            column.add(Integer.parseInt(eElement.getTextContent()));
+                        if(entry.getValue().equals("int"))
+                            ((Column<Integer>)column).add(Integer.parseInt(eElement.getTextContent()));
                         else
-                            column.add(eElement.getTextContent());*/
+                        	((Column<String>)column).add(eElement.getTextContent());
                     }
                 }
             }
