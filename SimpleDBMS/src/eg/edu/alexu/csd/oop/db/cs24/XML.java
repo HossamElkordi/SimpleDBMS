@@ -130,10 +130,10 @@ public class XML {
                     if (node.getNodeType() == Node.ELEMENT_NODE)
                     {
                         Element eElement = (Element) node;
-                        if(entry.getValue().equals("int"))
+                        /*if(entry.getValue().equals("int"))
                             column.add(Integer.parseInt(eElement.getTextContent()));
                         else
-                            column.add(eElement.getTextContent());
+                            column.add(eElement.getTextContent());*/
                     }
                 }
             }
