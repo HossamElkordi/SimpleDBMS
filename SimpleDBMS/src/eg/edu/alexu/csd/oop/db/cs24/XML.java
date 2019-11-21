@@ -80,10 +80,10 @@ public class XML {
             File ff = new File(path);
             System.out.println(ff.createNewFile());
             FileWriter fw = new FileWriter(ff);
-            fw.write("<!ELEMENT " + table.getName() + " ("+table.getColumns().getClass().getName()+"+)>\n");
-            fw.write("<!ELEMENT"+table.getColumns().getClass().getName()+" (Data?)>\n");
-            fw.write("<!ATTLIST"+table.getColumns().getClass().getName()+ " id ID #REQUIRED\n");
-            fw.write("<!ATTLIST"+table.getColumns().getClass().getName()+ " type #REQUIRED\n");
+            fw.write("<!ELEMENT " + table.getName() + " ("+table.getColumns().get(0).getClass().getName()+"+)>\n");
+            fw.write("<!ELEMENT "+table.getColumns().get(0).getClass().getName()+" (Data?)>\n");
+            fw.write("<!ATTLIST "+table.getColumns().get(0).getClass().getName()+ " id CDATA #REQUIRED>\n");
+            fw.write("<!ATTLIST "+table.getColumns().get(0).getClass().getName()+ " type CDATA #REQUIRED>\n");
             fw.write("<!ELEMENT Data (#PCDATA)>\n");
             fw.close();
         } catch (Exception e) {
