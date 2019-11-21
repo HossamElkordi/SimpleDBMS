@@ -46,14 +46,14 @@ public class XML {
             ArrayList<Column<?>> columns=table.getColumns();
             for(int i=0;i<columns.size();++i)
             {
-                e = dom.createElement(columns.getClass().getName());
+                e = dom.createElement(columns.get(i).getClass().getName());
                 e.setAttribute("id",columns.get(i).getName());
                 if(columns.get(i).getType().getSimpleName().equals("String"))
                     e.setAttribute("type","varchar");
                 else
                     e.setAttribute("type","int");
+                rootEle.appendChild(e);
             }
-            rootEle.appendChild(e);
             dom.appendChild(rootEle);
             dbf.setValidating(true);
             try {
@@ -80,9 +80,9 @@ public class XML {
             File ff = new File(path);
             System.out.println(ff.createNewFile());
             FileWriter fw = new FileWriter(ff);
-            fw.write("<!ELEMENT " + table.getName() + "("+table.getColumns().getClass().getName()+"+)>\n");
-            fw.write("<!ELEMENT"+table.getColumns().getClass().getName()+"(Data?)>\n");
-            fw.write("<!ATTLIST"+table.getColumns().getClass().getName()+ "id ID #REQUIRED\n");
+            fw.write("<!ELEMENT " + table.getName() + " ("+table.getColumns().getClass().getName()+"+)>\n");
+            fw.write("<!ELEMENT"+table.getColumns().getClass().getName()+" (Data?)>\n");
+            fw.write("<!ATTLIST"+table.getColumns().getClass().getName()+ " id ID #REQUIRED\n");
             fw.write("<!ATTLIST"+table.getColumns().getClass().getName()+ " type #REQUIRED\n");
             fw.write("<!ELEMENT Data (#PCDATA)>\n");
             fw.close();
