@@ -120,7 +120,7 @@ public class Table {
 		}
 	}
 		
-	private Column<?> getColumnByName(String name) {
+	public Column<?> getColumnByName(String name) {
 		for (Column<?> column : this.columns) {
 			if(column.getName().equals(name)) {
 				return column;
