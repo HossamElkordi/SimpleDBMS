@@ -78,11 +78,10 @@ public class XML {
         try {
             path=path.replace("xml","dtd");
             File ff = new File(path);
-            System.out.println(ff.createNewFile());
             FileWriter fw = new FileWriter(ff);
             fw.write("<!ELEMENT " + table.getName() + " ("+table.getColumns().get(0).getClass().getName()+"+)>\n");
             fw.write("<!ELEMENT "+table.getColumns().get(0).getClass().getName()+" (Data?)>\n");
-            fw.write("<!ATTLIST "+table.getColumns().get(0).getClass().getName()+ " id CDATA #REQUIRED>\n");
+            fw.write("<!ATTLIST "+table.getColumns().get(0).getClass().getName()+ " id ID #REQUIRED>\n");
             fw.write("<!ATTLIST "+table.getColumns().get(0).getClass().getName()+ " type CDATA #REQUIRED>\n");
             fw.write("<!ELEMENT Data (#PCDATA)>\n");
             fw.close();
