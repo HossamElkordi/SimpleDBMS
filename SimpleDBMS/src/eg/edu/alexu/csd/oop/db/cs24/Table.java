@@ -163,6 +163,34 @@ public class Table {
 		}
 		writeInFile(path, doc);
 	}
+
+	public Object[][] SelectRecord(ArrayList<String> condition, String path) {
+
+		Document doc = getDocument(path);
+		ArrayList<String> colsNeeded = getColsNeeded(condition);
+		ArrayList<String> reps = new ArrayList<String>();
+
+		int count = this.columns.get(0).getElements().size();
+		ArrayList<ArrayList<Object>>answer=new ArrayList<>();
+		for (int i = 0; i < count; i++) {
+			reps.clear();
+			for (String s : colsNeeded) {
+				reps.add((getColumnByName(s).getElements().get(i)).toString());
+			}
+			if(cp.evaluate((ArrayList<String>) condition.clone(), reps)) {
+				answer.add(new ArrayList<>());
+				for (int j = 0; j < this.columns.size(); j++) {
+					Node col = doc.getElementById(this.columns.get(j).getName());
+					NodeList colList = col.getChildNodes();
+					Element e = (Element) colList.item(i);
+					answer.get(i).add(e);
+				}
+				count--;
+			}
+		}
+		writeInFile(path, doc);
+		return (Object[][])answer.toArray();
+	}
 	
 	/**
 	 * @param path
