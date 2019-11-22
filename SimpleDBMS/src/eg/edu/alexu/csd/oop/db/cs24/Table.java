@@ -16,6 +16,7 @@ import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
@@ -74,16 +75,6 @@ public class Table {
 				Element DataCell = doc.createElement("Data");
 				DataCell.appendChild(doc.createTextNode(m.getValue()));
 				column.appendChild(DataCell);
-                try {
-                    Transformer tr = TransformerFactory.newInstance().newTransformer();
-                    tr.setOutputProperty(OutputKeys.INDENT, "yes");
-                    tr.setOutputProperty(
-                            OutputKeys.DOCTYPE_SYSTEM, path.substring(path.lastIndexOf('\\')+1,path.indexOf(".xml"))+".dtd");
-                    tr.transform(new DOMSource(doc),
-                            new StreamResult(new FileOutputStream(path)));
-                } catch (TransformerException | IOException te) {
-                    System.out.println(te.getMessage());
-                }
 				// add in the table itself
 				Column<?> col = getColumnByName(m.getKey());
 				if(col.getType().getSimpleName().equals("Integer")) {
@@ -92,8 +83,27 @@ public class Table {
 					((Column<String>)col).add(m.getValue());
 				}
 			}
+			writeInFile(path, doc);
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * @param path
+	 * @param doc
+	 * @throws TransformerFactoryConfigurationError
+	 */
+	private void writeInFile(String path, Document doc) throws TransformerFactoryConfigurationError {
+		try {
+		    Transformer tr = TransformerFactory.newInstance().newTransformer();
+		    tr.setOutputProperty(OutputKeys.INDENT, "yes");
+		    tr.setOutputProperty(
+		            OutputKeys.DOCTYPE_SYSTEM, path.substring(path.lastIndexOf('\\')+1,path.indexOf(".xml"))+".dtd");
+		    tr.transform(new DOMSource(doc),
+		            new StreamResult(new FileOutputStream(path)));
+		} catch (TransformerException | IOException te) {
+		    System.out.println(te.getMessage());
 		}
 	}
 	
@@ -114,10 +124,13 @@ public class Table {
 			Node column = doc.getElementById(m.getKey());
 			NodeList colList = column.getChildNodes();
 			for (int i = 0; i < colList.getLength(); i++) {
+				for(int j = 0; j < reps.size(); j++) {
+					reps.remove(0);
+				}
 				for (int j = 0; j < colsNeeded.size(); j++) {
 					reps.add((getColumnByName(colsNeeded.get(j)).getElements().get(i)).toString());
 				}
-				if(cp.evaluate(condition, reps)) {
+				if(cp.evaluate((ArrayList<String>) condition.clone(), reps)) {
 					colList.item(i).setTextContent(m.getValue());
 				}
 			}
