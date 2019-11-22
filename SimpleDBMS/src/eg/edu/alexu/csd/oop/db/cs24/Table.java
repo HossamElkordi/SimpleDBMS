@@ -170,10 +170,9 @@ public class Table {
 		ArrayList<String> colsNeeded = getColsNeeded(condition);
 		ArrayList<String> reps = new ArrayList<String>();
 
-		int count = this.columns.get(0).getElements().size();
 		int index=0;
 		ArrayList<ArrayList<Object>>answer=new ArrayList<>();
-		for (int i = 0; i < count; i++) {
+		for (int i = 0; i < this.columns.get(0).getElements().size(); ++i) {
 			reps.clear();
 			for (String s : colsNeeded) {
 				reps.add((getColumnByName(s).getElements().get(i)).toString());
@@ -190,13 +189,12 @@ public class Table {
 						answer.get(index).add(e.getTextContent());
 				}
 				++index;
-				count--;
 			}
 		}
 		if(answer.size()!=0)
 		{
 			Object[][]AnswerArray=new Object[answer.size()][answer.get(0).size()];
-			for (int i = 0; i < answer.size(); i++) {
+			for (int i = 0; i < answer.size(); ++i) {
 				ArrayList<Object> row = answer.get(i);
 				AnswerArray[i] = row.toArray(new Object[row.size()]);
 			}
