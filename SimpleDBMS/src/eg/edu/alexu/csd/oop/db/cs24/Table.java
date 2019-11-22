@@ -1,6 +1,7 @@
 package eg.edu.alexu.csd.oop.db.cs24;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,6 +12,12 @@ import java.util.Set;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -53,7 +60,7 @@ public class Table {
 	
 	@SuppressWarnings("unchecked")
 	public void addRecord(HashMap<String, String> record , String path) {
-		
+
 		Document doc = getDocument(path);
 		
 		Set<?> set = record.entrySet();
@@ -67,6 +74,16 @@ public class Table {
 				Element DataCell = doc.createElement("Data");
 				DataCell.appendChild(doc.createTextNode(m.getValue()));
 				column.appendChild(DataCell);
+                try {
+                    Transformer tr = TransformerFactory.newInstance().newTransformer();
+                    tr.setOutputProperty(OutputKeys.INDENT, "yes");
+                    tr.setOutputProperty(
+                            OutputKeys.DOCTYPE_SYSTEM, path.substring(path.lastIndexOf('\\')+1,path.indexOf(".xml"))+".dtd");
+                    tr.transform(new DOMSource(doc),
+                            new StreamResult(new FileOutputStream(path)));
+                } catch (TransformerException | IOException te) {
+                    System.out.println(te.getMessage());
+                }
 				// add in the table itself
 				Column<?> col = getColumnByName(m.getKey());
 				if(col.getType().getSimpleName().equals("Integer")) {
