@@ -141,7 +141,7 @@ public class Parser {
 	public Map<String,Object> updateQueryParser(String input){
 	    Pattern a=Pattern.compile(
 	            "((update)|(UPDATE))[\\s]+[\\S]+[\\s]+((set)|(SET))[\\s]+[\\S]+[\\s]*[=][\\s]*(['][^']*[']|[^'])" +
-                        "([\\s]*([,][\\s]+[\\S]+[\\s]*[=][\\s]*(['][^']*[']|[^']))*)[\\s]*(((WHERE)|(where))[^;]+)*[;]"
+                        "([\\s]*([,][\\s]+[\\S]+[\\s]*[=][\\s]*(['][^']*[']|[^']))*)[\\s]*(((WHERE)|(where))[^;]+)?[;]"
         );
 	    Matcher z=a.matcher(input.toLowerCase());
 	    if(!z.matches())return null;
@@ -162,8 +162,8 @@ public class Parser {
             i++;
         }
         if(conditioni==-1){output.put("condition",null);}
-        else{if(cp.noregexparser(input.substring(conditioni+5))==null){return null;}
-            output.put("condition",cp.noregexparser(input.substring(conditioni+5)));}
+        else{if(cp.noregexparser(input.substring(conditioni+5).replace(";",""))==null){return null;}
+            output.put("condition",cp.noregexparser(input.substring(conditioni+5).replace(";","")));}
         return output;
 
 
@@ -171,7 +171,7 @@ public class Parser {
     }
     public Map<String,Object> selectQueryParser(String input){ConditionParser cp=ConditionParser.getInstance();
         Pattern a=Pattern.compile(
-                "((select)|(SELECT))[\\s]+([*]|([^,\\s]+[\\s]*([,][\\s]*[^,\\s]+)*))[\\s]+((FROM)|(from))[\\s]+[\\S]+[\\s]+(((WHERE)|(where))[^;]+)*[;]"
+                "((select)|(SELECT))[\\s]+([*]|([^,\\s]+[\\s]*([,][\\s]*[^,\\s]+)*))[\\s]+((FROM)|(from))[\\s]+[\\S]+[\\s]+(((WHERE)|(where))[^;]+)?[;]"
         );
         Matcher z=a.matcher(input.toLowerCase());
         if(!z.matches())return null;
@@ -193,8 +193,8 @@ public class Parser {
         if(tablename==null)return null;
         else{output.put("tablename",tablename);}
         if(conditioni==-1){output.put("condition",null);}
-        else{if(cp.noregexparser(input.substring(conditioni+5))==null){return null;}
-            output.put("condition",cp.noregexparser(input.substring(conditioni+5)));}
+        else{if(cp.noregexparser(input.substring(conditioni+5).replace(";",""))==null){return null;}
+            output.put("condition",cp.noregexparser(input.substring(conditioni+5).replace(";","")));}
         return output;
     }
 
@@ -290,6 +290,25 @@ public class Parser {
         return output;
 
 
+   }
+
+   public Map<String,Object> deleteQueryParser(String input){ConditionParser cp=ConditionParser.getInstance();
+       Pattern a=Pattern.compile("(delete)[\\s]+(from)[\\s]+[^\\s]+[\\s]*([\\s]+(where)[\\s]+[^;]+)?[\\s]*[;]");
+	   Map<String ,Object> output=new HashMap<>();
+       Matcher z=a.matcher(input.toLowerCase());
+       if(!z.matches())return null;
+       input.replace(";","");
+       int wherei,fromi;
+       if(!(input.toLowerCase().contains("where"))){output.put("condition",null);wherei=-1;}
+       else{wherei=input.toLowerCase().indexOf("where");
+           output.put("condition",cp.noregexparser(input.substring(wherei+5).replace(";","")));
+       }
+       fromi=input.toLowerCase().indexOf("from");
+       if(wherei==-1){
+           output.put("table",input.substring(fromi+4).replace(" ","").replace(";",""));
+       }
+       else{output.put("table",input.substring(fromi+4,wherei).replace(" ",""));}
+       return output;
    }
 
 		

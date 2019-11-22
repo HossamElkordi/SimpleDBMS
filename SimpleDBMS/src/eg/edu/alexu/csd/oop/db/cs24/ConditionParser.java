@@ -28,10 +28,10 @@ public class ConditionParser {
         ArrayList<String> output = new ArrayList<String>();
         int i=0,istart;
         while(i<input.length()) {
-            while (input.charAt(i) == ' ') {
+            while (i<input.length()&&input.charAt(i) == ' ') {
                 i++;
             }
-            if (Character.isDigit(input.charAt(i)) || Character.isLetter(input.charAt(i))||input.charAt(i) =='\'') {
+            if (i<input.length()&&(Character.isDigit(input.charAt(i)) || Character.isLetter(input.charAt(i))||input.charAt(i) =='\'')) {
                 istart = i;
                 while (!isCompartor(input.charAt(i)) && input.charAt(i) != ' ') {
                     if(input.charAt(i)=='\''){i++;
@@ -48,7 +48,7 @@ public class ConditionParser {
                     i++;
                 }
                 if(i<input.length()) output.add(input.substring(istart, i));
-            } else {
+            } else if(i<input.length()){
                 istart = i;
                 while (isCompartor(input.charAt(i))) {
                     if (i == input.length() - 1) {
