@@ -171,6 +171,7 @@ public class Table {
 		ArrayList<String> reps = new ArrayList<String>();
 
 		int count = this.columns.get(0).getElements().size();
+		int index=0;
 		ArrayList<ArrayList<Object>>answer=new ArrayList<>();
 		for (int i = 0; i < count; i++) {
 			reps.clear();
@@ -183,13 +184,22 @@ public class Table {
 					Node col = doc.getElementById(this.columns.get(j).getName());
 					NodeList colList = col.getChildNodes();
 					Element e = (Element) colList.item(i);
-					answer.get(i).add(e);
+					if(e.getParentNode().getAttributes().item(0).equals("int"))
+						answer.get(index).add(Integer.parseInt(e.getTextContent()));
+					else
+						answer.get(index).add(e.getTextContent());
 				}
+				++index;
 				count--;
 			}
 		}
+		Object[][]AnswerArray=new Object[answer.size()][answer.get(0).size()];
+		for (int i = 0; i < answer.size(); i++) {
+			ArrayList<Object> row = answer.get(i);
+			AnswerArray[i] = row.toArray(new Object[row.size()]);
+		}
 		writeInFile(path, doc);
-		return (Object[][])answer.toArray();
+		return AnswerArray;
 	}
 	
 	/**
