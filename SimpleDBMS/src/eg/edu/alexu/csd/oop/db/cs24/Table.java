@@ -193,13 +193,17 @@ public class Table {
 				count--;
 			}
 		}
-		Object[][]AnswerArray=new Object[answer.size()][answer.get(0).size()];
-		for (int i = 0; i < answer.size(); i++) {
-			ArrayList<Object> row = answer.get(i);
-			AnswerArray[i] = row.toArray(new Object[row.size()]);
+		if(answer.size()!=0)
+		{
+			Object[][]AnswerArray=new Object[answer.size()][answer.get(0).size()];
+			for (int i = 0; i < answer.size(); i++) {
+				ArrayList<Object> row = answer.get(i);
+				AnswerArray[i] = row.toArray(new Object[row.size()]);
+			}
+			return AnswerArray;
 		}
 		writeInFile(path, doc);
-		return AnswerArray;
+		return null;
 	}
 	
 	/**

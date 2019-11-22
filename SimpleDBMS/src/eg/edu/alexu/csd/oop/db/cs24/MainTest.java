@@ -28,8 +28,8 @@ public class MainTest {
 		record.put("name", "Mina");
 		table.addRecord(record, path);
 		ArrayList<String> condition = new ArrayList<String>();
-		condition.add("id"); condition.add("="); condition.add("10");
-		Object[][] ans=table.SelectRecord(condition, path);
+		condition.add("id"); condition.add(">"); condition.add("10");
+		table.deleteRecord(condition, path);
 		ArrayList<String> condition1 = new ArrayList<String>();
 		
 //		ConditionParser cp = ConditionParser.getInstance();
