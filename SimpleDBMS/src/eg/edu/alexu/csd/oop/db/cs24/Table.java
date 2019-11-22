@@ -97,7 +97,7 @@ public class Table {
 	private void writeInFile(String path, Document doc) throws TransformerFactoryConfigurationError {
 		try {
 		    Transformer tr = TransformerFactory.newInstance().newTransformer();
-		    tr.setOutputProperty(OutputKeys.INDENT, "yes");
+//		    tr.setOutputProperty(OutputKeys.INDENT, "yes");
 		    tr.setOutputProperty(
 		            OutputKeys.DOCTYPE_SYSTEM, path.substring(path.lastIndexOf('\\')+1,path.indexOf(".xml"))+".dtd");
 		    tr.transform(new DOMSource(doc),
@@ -153,6 +153,7 @@ public class Table {
 				}
 			}
 		}
+		writeInFile(path, doc);
 	}
 		
 	public Column<?> getColumnByName(String name) {
