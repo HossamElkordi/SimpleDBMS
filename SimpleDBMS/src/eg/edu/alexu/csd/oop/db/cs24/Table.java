@@ -88,24 +88,6 @@ public class Table {
 			e.printStackTrace();
 		}
 	}
-
-	/**
-	 * @param path
-	 * @param doc
-	 * @throws TransformerFactoryConfigurationError
-	 */
-	private void writeInFile(String path, Document doc) throws TransformerFactoryConfigurationError {
-		try {
-		    Transformer tr = TransformerFactory.newInstance().newTransformer();
-		    tr.setOutputProperty(OutputKeys.INDENT, "yes");
-		    tr.setOutputProperty(
-		            OutputKeys.DOCTYPE_SYSTEM, path.substring(path.lastIndexOf('\\')+1,path.indexOf(".xml"))+".dtd");
-		    tr.transform(new DOMSource(doc),
-		            new StreamResult(new FileOutputStream(path)));
-		} catch (TransformerException | IOException te) {
-		    System.out.println(te.getMessage());
-		}
-	}
 	
 	@SuppressWarnings("unchecked")
 	public void updateRecord(HashMap<String, String> colValues, ArrayList<String> condition, String path) {
@@ -124,9 +106,7 @@ public class Table {
 			Node column = doc.getElementById(m.getKey());
 			NodeList colList = column.getChildNodes();
 			for (int i = 0; i < colList.getLength(); i++) {
-				for(int j = 0; j < reps.size(); j++) {
-					reps.remove(0);
-				}
+				reps.clear();
 				for (int j = 0; j < colsNeeded.size(); j++) {
 					reps.add((getColumnByName(colsNeeded.get(j)).getElements().get(i)).toString());
 				}
@@ -138,9 +118,7 @@ public class Table {
 			Column<?> col = getColumnByName(m.getKey());
 			ArrayList<?> elements = col.getElements();
 			for(Object column1 : elements) {
-				for(int i = 0; i < reps.size(); i++) {
-					reps.remove(0);
-				}
+				reps.clear();
 				for (int i = 0; i < colsNeeded.size(); i++) {
 					reps.add((getColumnByName(colsNeeded.get(i)).getElements().get(elements.indexOf(column1))).toString());
 				}
@@ -152,6 +130,54 @@ public class Table {
 					}
 				}
 			}
+		}
+		writeInFile(path, doc);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void deleteRecord(ArrayList<String> condition, String path) {
+		
+		Document doc = getDocument(path);
+		ArrayList<String> colsNeeded = getColsNeeded(condition);
+		ArrayList<String> reps = new ArrayList<String>();
+		
+		int count = this.columns.get(0).getElements().size();
+		
+		for (int i = 0; i < count; i++) {
+			reps.clear();
+			for (int j = 0; j < colsNeeded.size(); j++) {
+				reps.add((getColumnByName(colsNeeded.get(j)).getElements().get(i)).toString());
+			}
+			if(cp.evaluate((ArrayList<String>) condition.clone(), reps)) {				
+				for (int j = 0; j < this.columns.size(); j++) {
+					// delete from xml
+					Node col = doc.getElementById(this.columns.get(j).getName());
+					NodeList colList = col.getChildNodes();
+					Element e = (Element) colList.item(i);
+					e.getParentNode().removeChild(e);
+					// delete from table itself
+					this.columns.get(j).getElements().remove(i);
+				}
+				count--;
+			}
+		}
+		writeInFile(path, doc);
+	}
+	
+	/**
+	 * @param path
+	 * @param doc
+	 * @throws TransformerFactoryConfigurationError
+	 */
+	private void writeInFile(String path, Document doc) throws TransformerFactoryConfigurationError {
+		try {
+		    Transformer tr = TransformerFactory.newInstance().newTransformer();
+		    tr.setOutputProperty(
+		            OutputKeys.DOCTYPE_SYSTEM, path.substring(path.lastIndexOf('\\')+1,path.indexOf(".xml"))+".dtd");
+		    tr.transform(new DOMSource(doc),
+		            new StreamResult(new FileOutputStream(path)));
+		} catch (TransformerException | IOException te) {
+		    System.out.println(te.getMessage());
 		}
 	}
 		
