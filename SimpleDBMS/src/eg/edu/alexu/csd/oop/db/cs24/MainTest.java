@@ -31,7 +31,7 @@ public class MainTest {
 		condition.add("id"); condition.add(">"); condition.add("10");
 		Object[][]temp=table.SelectRecord(condition, path);
 		table.deleteRecord(condition,path);
-		ArrayList<String> condition1 = new ArrayList<String>();
+		
 		
 //		ConditionParser cp = ConditionParser.getInstance();
 //		ArrayList<String> condition = new ArrayList<String>();

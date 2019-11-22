@@ -102,31 +102,23 @@ public class Table {
 		
 		while(iter.hasNext()) {
 			Map.Entry<String, String> m = (Map.Entry<String, String>) iter.next();
-			// update from xml
 			Node column = doc.getElementById(m.getKey());
 			NodeList colList = column.getChildNodes();
+			Column<?> col = getColumnByName(m.getKey());
+			ArrayList<?> elements = col.getElements();
 			for (int i = 0; i < colList.getLength(); i++) {
 				reps.clear();
 				for (int j = 0; j < colsNeeded.size(); j++) {
 					reps.add((getColumnByName(colsNeeded.get(j)).getElements().get(i)).toString());
 				}
 				if(cp.evaluate((ArrayList<String>) condition.clone(), reps)) {
+					// update from xml
 					colList.item(i).setTextContent(m.getValue());
-				}
-			}
-			// update in the table itself
-			Column<?> col = getColumnByName(m.getKey());
-			ArrayList<?> elements = col.getElements();
-			for(Object column1 : elements) {
-				reps.clear();
-				for (int i = 0; i < colsNeeded.size(); i++) {
-					reps.add((getColumnByName(colsNeeded.get(i)).getElements().get(elements.indexOf(column1))).toString());
-				}
-				if(cp.evaluate((ArrayList<String>) condition.clone(), reps)) {
+					// update in the table itself
 					if(col.getType().getSimpleName().equals("Integer")) {
-						((Column<Integer>)col).set(elements.indexOf(column1),Integer.parseInt(m.getValue()));
+						((Column<Integer>)col).set(elements.indexOf(elements.get(i)),Integer.parseInt(m.getValue()));
 					}else {
-						((Column<String>)col).set(elements.indexOf(column1),m.getValue());
+						((Column<String>)col).set(elements.indexOf(elements.get(i)),m.getValue());
 					}
 				}
 			}
@@ -158,12 +150,14 @@ public class Table {
 					// delete from table itself
 					this.columns.get(j).getElements().remove(i);
 				}
+				i--;
 				count--;
 			}
 		}
 		writeInFile(path, doc);
 	}
 
+	@SuppressWarnings("unchecked")
 	public Object[][] SelectRecord(ArrayList<String> condition, String path) {
 
 		Document doc = getDocument(path);
@@ -183,7 +177,7 @@ public class Table {
 					Node col = doc.getElementById(this.columns.get(j).getName());
 					NodeList colList = col.getChildNodes();
 					Element e = (Element) colList.item(i);
-					if(e.getParentNode().getAttributes().item(0).equals("int"))
+					if(e.getParentNode().getAttributes().item(0).toString().equals("int"))
 						answer.get(index).add(Integer.parseInt(e.getTextContent()));
 					else
 						answer.get(index).add(e.getTextContent());

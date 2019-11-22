@@ -1,6 +1,5 @@
 package eg.edu.alexu.csd.oop.db.cs24;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
