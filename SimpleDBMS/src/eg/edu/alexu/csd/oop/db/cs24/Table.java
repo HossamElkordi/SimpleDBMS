@@ -11,6 +11,13 @@ import java.util.Set;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -75,6 +82,7 @@ public class Table {
 					((Column<String>)col).add(m.getValue());
 				}
 			}
+			writeInFile(path, doc);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -91,40 +99,61 @@ public class Table {
 		ArrayList<String> colsNeeded = getColsNeeded(condition);
 		ArrayList<String> reps = new ArrayList<String>();
 		
-		while(iter.hasNext()) {
-			Map.Entry<String, String> m = (Map.Entry<String, String>) iter.next();
-			// update from xml
-			Node column = doc.getElementById(m.getKey());
-			NodeList colList = column.getChildNodes();
-			for (int i = 0; i < colList.getLength(); i++) {
-				for (int j = 0; j < colsNeeded.size(); j++) {
-					reps.add((getColumnByName(colsNeeded.get(j)).getElements().get(i)).toString());
+		try {
+			while(iter.hasNext()) {
+				Map.Entry<String, String> m = (Map.Entry<String, String>) iter.next();
+				// update from xml
+				Node column = doc.getElementById(m.getKey());
+				NodeList colList = column.getChildNodes();
+				for (int i = 0; i < colList.getLength(); i++) {
+					for (int j = 0; j < colsNeeded.size(); j++) {
+						reps.add((getColumnByName(colsNeeded.get(j)).getElements().get(i)).toString());
+					}
+					if(cp.evaluate(condition, reps)) {
+						colList.item(i).setTextContent(m.getValue());
+					}
 				}
-				if(cp.evaluate(condition, reps)) {
-					colList.item(i).setTextContent(m.getValue());
-				}
-			}
-			// update in the table itself
-			Column<?> col = getColumnByName(m.getKey());
-			ArrayList<?> elements = col.getElements();
-			for(Object column1 : elements) {
-				for(int i = 0; i < reps.size(); i++) {
-					reps.remove(0);
-				}
-				for (int i = 0; i < colsNeeded.size(); i++) {
-					reps.add((getColumnByName(colsNeeded.get(i)).getElements().get(elements.indexOf(column1))).toString());
-				}
-				if(cp.evaluate((ArrayList<String>) condition.clone(), reps)) {
-					if(col.getType().getSimpleName().equals("Integer")) {
-						((Column<Integer>)col).set(elements.indexOf(column1),Integer.parseInt(m.getValue()));
-					}else {
-						((Column<String>)col).set(elements.indexOf(column1),m.getValue());
+				// update in the table itself
+				Column<?> col = getColumnByName(m.getKey());
+				ArrayList<?> elements = col.getElements();
+				for(Object column1 : elements) {
+					for(int i = 0; i < reps.size(); i++) {
+						reps.remove(0);
+					}
+					for (int i = 0; i < colsNeeded.size(); i++) {
+						reps.add((getColumnByName(colsNeeded.get(i)).getElements().get(elements.indexOf(column1))).toString());
+					}
+					if(cp.evaluate((ArrayList<String>) condition.clone(), reps)) {
+						if(col.getType().getSimpleName().equals("Integer")) {
+							((Column<Integer>)col).set(elements.indexOf(column1),Integer.parseInt(m.getValue()));
+						}else {
+							((Column<String>)col).set(elements.indexOf(column1),m.getValue());
+						}
 					}
 				}
 			}
+			writeInFile(path, doc);
+		} catch (TransformerFactoryConfigurationError | TransformerException e) {
+			e.printStackTrace();
 		}
 	}
 		
+	/**
+	 * @param path
+	 * @param doc
+	 * @throws TransformerFactoryConfigurationError
+	 * @throws TransformerConfigurationException
+	 * @throws TransformerException
+	 */
+	private void writeInFile(String path, Document doc)
+			throws TransformerFactoryConfigurationError, TransformerConfigurationException, TransformerException {
+		TransformerFactory tf = TransformerFactory.newInstance();
+		Transformer trans = tf.newTransformer();
+		DOMSource source = new DOMSource(doc);
+		StreamResult res = new StreamResult(new File(path));
+		trans.transform(source, res);
+	}
+	
 	public Column<?> getColumnByName(String name) {
 		for (Column<?> column : this.columns) {
 			if(column.getName().equals(name)) {
