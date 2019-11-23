@@ -32,23 +32,30 @@ public class Table {
 	
 	private String name;
 	private ArrayList<Column<?>> columns;
-	
-	@SuppressWarnings("unchecked")
-	public Table(String name, HashMap<String, String> columns) {
+
+	public Table(String name, ArrayList<String> columns) {
 		this.name = name;
 		this.columns = new ArrayList<Column<?>>();
 		
-		Set<?> set = columns.entrySet();
-		Iterator<?> iter = set.iterator();
-		
-		while (iter.hasNext()) {
-			Map.Entry<String, String> m = (Map.Entry<String, String>) iter.next();
-			if(m.getValue().equals("int")) {
-				this.columns.add(new Column<Integer>(m.getKey(), Integer.class));
+		for(int i = 0; i < columns.size(); i++) {
+			if(columns.get(i).contains("int")) {
+				this.columns.add(new Column<Integer>(columns.get(i).split(", ")[0], Integer.class));
 			}else {
-				this.columns.add(new Column<String>(m.getKey(), String.class));
+				this.columns.add(new Column<String>(columns.get(i).split(", ")[0], String.class));
 			}
 		}
+		
+//		Set<?> set = columns.entrySet();
+//		Iterator<?> iter = set.iterator();
+//		
+//		while (iter.hasNext()) {
+//			Map.Entry<String, String> m = (Map.Entry<String, String>) iter.next();
+//			if(m.getValue().contains("int")) {
+//				this.columns.add(new Column<Integer>(m.getKey(), Integer.class));
+//			}else {
+//				this.columns.add(new Column<String>(m.getKey(), String.class));
+//			}
+//		}
 	}
 	
 	public String getName() {

@@ -101,7 +101,7 @@ public class XML {
             Document doc = dBuilder.parse(fXmlFile);
             doc.getDocumentElement().normalize();
             Element root = doc.getDocumentElement();
-            HashMap<String,String> ColumnsData=new HashMap<>();
+            ArrayList<String> ColumnsData=new ArrayList<String>();
             NodeList nList = doc.getElementsByTagName(Column.class.getName());
             for(int i=0;i<nList.getLength();++i)
             {
@@ -109,21 +109,21 @@ public class XML {
                 if (node.getNodeType() == Node.ELEMENT_NODE)
                 {
                     Element eElement = (Element) node;
-                    ColumnsData.put(eElement.getAttribute("id"),eElement.getAttribute("type"));
+                    ColumnsData.add(eElement.getAttribute("id") + ", " + eElement.getAttribute("type"));
                 }
             }
             table=new Table(root.getNodeName(),ColumnsData);
-            for(HashMap.Entry<String,String> entry: ColumnsData.entrySet())
+            for(int j = 0; j < ColumnsData.size(); j++)
             {
-                Column<?>column=table.getColumnByName(entry.getKey());
-                nList = doc.getElementById(entry.getKey()).getChildNodes();
+                Column<?>column=table.getColumnByName(ColumnsData.get(j).split(", ")[0]);
+                nList = doc.getElementById(ColumnsData.get(j).split(", ")[1]).getChildNodes();
                 for (int i = 0; i < nList.getLength(); ++i)
                 {
                     Node node = nList.item(i);
                     if (node.getNodeType() == Node.ELEMENT_NODE)
                     {
                         Element eElement = (Element) node;
-                        if(entry.getValue().equals("int"))
+                        if(ColumnsData.get(j).split(", ")[1].equals("int"))
                             ((Column<Integer>)column).add(Integer.parseInt(eElement.getTextContent()));
                         else
                         	((Column<String>)column).add(eElement.getTextContent());

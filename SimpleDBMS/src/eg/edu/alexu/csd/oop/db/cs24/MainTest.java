@@ -8,9 +8,10 @@ public class MainTest {
 
 	public static void main(String[] args) {
 		String path = System.getProperty("user.dir") + System.getProperty("file.separator") + "Databases" + System.getProperty("file.separator") + "test.xml";
-		HashMap<String, String> cols = new HashMap<String, String>();
-		cols.put("id", "int");
-		cols.put("name", "varchar");
+		ArrayList<String> cols = new ArrayList<String>();
+		cols.add("id, int");
+		cols.add("name, varchar");
+		cols.add("score, varchar");
 		Table table = new Table("group", cols);
 		XML p = XML.getInstace();
 		p.SaveTable(table, path);

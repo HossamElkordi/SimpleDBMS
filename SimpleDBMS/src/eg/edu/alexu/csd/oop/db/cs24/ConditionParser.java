@@ -18,6 +18,7 @@ public class ConditionParser {
         if(cp == null) {
             cp = new ConditionParser();
         }
+//        [^\s,><=]+[\s]* ((>)|(<)|(=)|(>=)|(<=)|(<>))[\s]*[^\s,><=]+ (((and)|(or))[^\s,><=]+[\s]* ((>)|(<)|(=)|(>=)|(<=)|(<>))[\s]*[^\s,><=]+)*
         return cp;
     }
     private boolean isCompartor(Character checked){
