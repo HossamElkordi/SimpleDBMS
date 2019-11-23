@@ -3,11 +3,7 @@ package eg.edu.alexu.csd.oop.db.cs24;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -135,19 +131,19 @@ public class Table {
 	
 	@SuppressWarnings("unchecked")
 	public void deleteRecord(ArrayList<String> condition, String path) {
-		
+
 		Document doc = getDocument(path);
 		ArrayList<String> colsNeeded = getColsNeeded(condition);
 		ArrayList<String> reps = new ArrayList<String>();
-		
+
 		int count = this.columns.get(0).getElements().size();
-		
+
 		for (int i = 0; i < count; i++) {
 			reps.clear();
 			for (int j = 0; j < colsNeeded.size(); j++) {
 				reps.add((getColumnByName(colsNeeded.get(j)).getElements().get(i)).toString());
 			}
-			if(cp.evaluate((ArrayList<String>) condition.clone(), reps)) {				
+			if(cp.evaluate((ArrayList<String>) condition.clone(), reps)) {
 				for (int j = 0; j < this.columns.size(); j++) {
 					// delete from xml
 					Node col = doc.getElementById(this.columns.get(j).getName());
@@ -165,7 +161,7 @@ public class Table {
 	}
 
 	@SuppressWarnings("unchecked")
-	public Object[][] SelectRecord(ArrayList<String> condition, String path) {
+	public Object[][] SelectRecord(ArrayList<String> condition, String path,ArrayList<String> ColumnNames) {
 
 		Document doc = getDocument(path);
 		ArrayList<String> colsNeeded = getColsNeeded(condition);
@@ -192,6 +188,14 @@ public class Table {
 				++index;
 			}
 		}
+		HashSet<Integer> Indices=new HashSet<>();
+		for (String columnName : ColumnNames)
+			Indices.add(this.columns.indexOf(getColumnByName(columnName)));
+		for(int i=0;i<answer.size();++i)
+		{
+			if(!Indices.contains(i))
+				answer.remove(i);
+		}
 		if(answer.size()!=0)
 		{
 			Object[][]AnswerArray=new Object[answer.size()][answer.get(0).size()];
@@ -201,7 +205,6 @@ public class Table {
 			}
 			return AnswerArray;
 		}
-		writeInFile(path, doc);
 		return null;
 	}
 	
