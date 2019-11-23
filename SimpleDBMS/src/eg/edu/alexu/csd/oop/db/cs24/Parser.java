@@ -310,5 +310,100 @@ public class Parser {
        return output;
    }
 
+    public Map<String,Object> createdatabase(String input){
+        input=input.trim();
+        Map<String,Object> output=new HashMap<>();
+        Pattern pattern = Pattern.compile("(create)[\\s]+(database)[\\s]+[\\w]+[\\s]*(;)");
+        Matcher matcher=pattern.matcher(input.toLowerCase());
+        if(!matcher.matches())
+            return null;
+        input=input.substring(0,input.length()-1);
+        input.trim();
+        input=input.substring(6);
+        input=input.trim();
+        input=input.substring(8);
+        input=input.trim();
+        output.put("DataBaseName",input);
+        return output;
+    }
+    public Map<String,Object> dropdatabase(String input){
+        input=input.trim();
+        Map<String,Object> output=new HashMap<>();
+        Pattern pattern = Pattern.compile("(drop)[\\s]+(database)[\\s]+[\\w]+[\\s]*(;)");
+        Matcher matcher=pattern.matcher(input.toLowerCase());
+        if(!matcher.matches())
+            return null;
+        input=input.substring(0,input.length()-1);
+        input.trim();
+        input=input.substring(4);
+        input=input.trim();
+        input=input.substring(8);
+        input=input.trim();
+        output.put("DataBaseName",input);
+        return output;
+    }
+    public Map<String,Object> createtable(String input){
+        input=input.trim();
+        if(input.charAt(input.length()-1)!=';'){
+            return null;
+        }else{
+            input=input.substring(0,input.length()-1);
+        }
+        int i=input.indexOf("(");
+        String check=input.substring(0,i-1);
+        check=check.trim();
+        Map<String,Object> output=new HashMap<>();
+        Pattern pattern = Pattern.compile("(create)[\\s]+(table)[\\s]+[\\w]+");
+        Matcher matcher=pattern.matcher(check.toLowerCase());
+        if(!matcher.matches())
+            return null;
+        check=check.substring(6);
+        check=check.trim();
+        check=check.substring(5);
+        check=check.trim();
+        output.put("tableName",check);
+        String check2=input.substring(i+1,input.lastIndexOf(")")-1);
+        check2=check2.trim();
+        String[] arrOfStr = check2.split(",");
+        int counter=0;
+        for(int j=0;j<check2.length();j++)
+        {
+            if(check2.charAt(j)==',')
+                counter++;
+        }
+        if(counter!=arrOfStr.length-1)
+            return null;
+        for(int j=0;j<arrOfStr.length;++j)
+        {
+            arrOfStr[j]=arrOfStr[j].trim();
+            Pattern pattern1=Pattern.compile("[\\w]+[\\s]+(int|varchar)");
+            Matcher matcher1=pattern1.matcher(arrOfStr[j].toLowerCase());
+            if(!matcher.matches())
+                return null;
+            String Name=arrOfStr[j].substring(0,Math.min(arrOfStr[j].indexOf(" "),arrOfStr[j].indexOf("\t"))-1);
+            if(arrOfStr[j].toLowerCase().contains("int")){
+                output.put(Name,"int");
+            }else if(arrOfStr[j].toLowerCase().contains("varchar")){
+                output.put(Name,"varchar");
+            }
+        }
+        return output;
+    }
+    public Map<String,Object> droptable(String input){
+        input=input.trim();
+        Map<String,Object> output=new HashMap<>();
+        Pattern pattern = Pattern.compile("(drop)[\\s]+(table)[\\s]+[\\w]+[\\s]*(;)");
+        Matcher matcher=pattern.matcher(input.toLowerCase());
+        if(!matcher.matches())
+            return null;
+        input=input.substring(0,input.length()-1);
+        input.trim();
+        input=input.substring(4);
+        input=input.trim();
+        input=input.substring(5);
+        input=input.trim();
+        output.put("tableName",input);
+        return output;
+    }
 		
 }
