@@ -20,10 +20,21 @@ public class MyDatabase implements Database {
 	private Table table;
 	private XML xmlParser = XML.getInstace();
 	private HashMap<String, String> colVals;
+	private MyCache cache;
 
 	public MyDatabase() {
 		File dir = new File(dbsPath);
 		dir.mkdirs();
+		cache = MyCache.getInstance();
+		
+		Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+
+			public void run() {
+				cache.clearCache();
+				table.writeInFile();
+			}
+			
+		}));
 	}
 	
 	public String createDatabase(String databaseName, boolean dropIfExists) {
@@ -41,7 +52,7 @@ public class MyDatabase implements Database {
 	public int executeUpdateQuery(String query) throws SQLException {
 		return 0;
 	}
-	
+		
 	@SuppressWarnings("unchecked")
 	private void addMapDecomposer(HashMap<String, Object> map) throws SQLException {
 		if(!this.tableName.equals(map.get("table").toString())) {

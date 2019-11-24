@@ -31,7 +31,16 @@ public class MainTest {
 		record.put("id", "66");
 		record.put("name", "Mina");
 		table.addRecord(record);
-		cache.clearCache();
+		
+		Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+
+			public void run() {
+				cache.clearCache();
+				table.writeInFile();
+			}
+			
+		}));
+//		cache.clearCache();
 //		ArrayList<String> condition = new ArrayList<String>();
 //		condition.add("id"); condition.add(">"); condition.add("10");
 //		Object[][]temp=table.SelectRecord(condition, path);
