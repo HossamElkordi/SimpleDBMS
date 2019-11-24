@@ -7,31 +7,35 @@ public class MainTest {
 //	static Parser a=Parser.getInstace();
 
 	public static void main(String[] args) {
+		MyCache cache = MyCache.getInstance();
 		String path = System.getProperty("user.dir") + System.getProperty("file.separator") + "Databases" + System.getProperty("file.separator") + "test.xml";
 		ArrayList<String> cols = new ArrayList<String>();
 		cols.add("id, int");
 		cols.add("name, varchar");
-		cols.add("score, varchar");
 		Table table = new Table("group", cols);
+		table.setPath(path);
+		table.createXML();
+		cache.addToCache(table);
 		XML p = XML.getInstace();
 		p.SaveTable(table, path);
 		HashMap<String, String> record = new HashMap<String, String>();
 		record.put("id", "24");
 		record.put("name", "Hossam");
-		table.addRecord(record, path);
+		table.addRecord(record);
 		record.put("id", "10");
 		record.put("name", "Ahmes");
-		table.addRecord(record, path);
+		table.addRecord(record);
 		record.put("id", "22");
 		record.put("name", "Pierre");
-		table.addRecord(record, path);
+		table.addRecord(record);
 		record.put("id", "66");
 		record.put("name", "Mina");
-		table.addRecord(record, path);
-		ArrayList<String> condition = new ArrayList<String>();
-		condition.add("id"); condition.add(">"); condition.add("10");
-		Object[][]temp=table.SelectRecord(condition, path);
-		table.deleteRecord(condition,path);
+		table.addRecord(record);
+		cache.clearCache();
+//		ArrayList<String> condition = new ArrayList<String>();
+//		condition.add("id"); condition.add(">"); condition.add("10");
+//		Object[][]temp=table.SelectRecord(condition, path);
+//		table.deleteRecord(condition);
 		
 		
 //		ConditionParser cp = ConditionParser.getInstance();

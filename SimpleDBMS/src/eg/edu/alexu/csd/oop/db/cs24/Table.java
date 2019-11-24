@@ -26,8 +26,12 @@ public class Table {
 	
 	ConditionParser cp = ConditionParser.getInstance();
 	
+	private XML parseXML;
+	private Document doc;
+	
 	private String name;
 	private ArrayList<Column<?>> columns;
+	private String path = "";
 
 	public Table(String name, ArrayList<String> columns) {
 		this.name = name;
@@ -54,6 +58,10 @@ public class Table {
 //		}
 	}
 	
+	public void setPath(String path) {
+		this.path = path;
+	}
+
 	public String getName() {
 		return name;
 	}
@@ -62,10 +70,20 @@ public class Table {
 		return columns;
 	}
 	
+	public void setDoc(Document newDoc) {
+		this.doc.setTextContent(newDoc.getTextContent());
+	}
+	
+	public void createXML() {
+		parseXML = XML.getInstace();
+		parseXML.SaveTable(this, path);
+		doc = getDocument();
+	}
+	
 	@SuppressWarnings("unchecked")
-	public void addRecord(HashMap<String, String> record , String path) {
+	public void addRecord(HashMap<String, String> record) {
 
-		Document doc = getDocument(path);
+//		Document doc = getDocument();
 		
 		Set<?> set = record.entrySet();
 		Iterator<?> iter = set.iterator();
@@ -86,16 +104,16 @@ public class Table {
 					((Column<String>)col).add(m.getValue());
 				}
 			}
-			writeInFile(path, doc);
+//			writeInFile();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 	
 	@SuppressWarnings("unchecked")
-	public void updateRecord(HashMap<String, String> colValues, ArrayList<String> condition, String path) {
+	public void updateRecord(HashMap<String, String> colValues, ArrayList<String> condition) {
 
-		Document doc = getDocument(path);
+//		Document doc = getDocument();
 		
 		Set<?> set = colValues.entrySet();
 		Iterator<?> iter = set.iterator();
@@ -126,13 +144,13 @@ public class Table {
 				}
 			}
 		}
-		writeInFile(path, doc);
+//		writeInFile();
 	}
 	
 	@SuppressWarnings("unchecked")
-	public void deleteRecord(ArrayList<String> condition, String path) {
+	public void deleteRecord(ArrayList<String> condition) {
 
-		Document doc = getDocument(path);
+//		Document doc = getDocument();
 		ArrayList<String> colsNeeded = getColsNeeded(condition);
 		ArrayList<String> reps = new ArrayList<String>();
 
@@ -157,13 +175,13 @@ public class Table {
 				count--;
 			}
 		}
-		writeInFile(path, doc);
+//		writeInFile();
 	}
 
 	@SuppressWarnings("unchecked")
-	public Object[][] SelectRecord(ArrayList<String> condition, String path,ArrayList<String> ColumnNames) {
+	public Object[][] SelectRecord(ArrayList<String> condition, ArrayList<String> ColumnNames) {
 
-		Document doc = getDocument(path);
+//		Document doc = getDocument();
 		ArrayList<String> colsNeeded = getColsNeeded(condition);
 		ArrayList<String> reps = new ArrayList<String>();
 
@@ -213,7 +231,7 @@ public class Table {
 	 * @param doc
 	 * @throws TransformerFactoryConfigurationError
 	 */
-	private void writeInFile(String path, Document doc) throws TransformerFactoryConfigurationError {
+	public void writeInFile() throws TransformerFactoryConfigurationError {
 		try {
 		    Transformer tr = TransformerFactory.newInstance().newTransformer();
 		    tr.setOutputProperty(
@@ -234,7 +252,7 @@ public class Table {
 		return null;
 	}
 	
-	private Document getDocument(String path) {
+	private Document getDocument() {
 		Document doc=null;
 		try {
 			File fXmlFile = new File(path);
@@ -254,6 +272,20 @@ public class Table {
 			cols.add(condition.get((3 * i) + i));
 		}
 		return cols;
+	}
+	
+	public Table clone() {
+		ArrayList<String> colNames = new ArrayList<String>();
+		for (int i = 0; i < this.columns.size(); i++) {
+			if(this.columns.get(i).getType().getSimpleName().equals("Integer")) {
+				colNames.add(this.columns.get(i).getName() + ", int");
+			}else {
+				colNames.add(this.columns.get(i).getName() + ", varchar");
+			}
+		}
+		Table t = new Table(this.name, colNames);		
+		t.setPath(this.path);
+		return t;
 	}
 	
 }
