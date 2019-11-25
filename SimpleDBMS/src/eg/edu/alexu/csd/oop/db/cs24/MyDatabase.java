@@ -156,7 +156,7 @@ public class MyDatabase implements Database {
 		int TypeChecker=parser.typechecker(query);
 		if(TypeChecker==-1){throw new SQLException("syntax error");}
 		else if(TypeChecker==5){
-			map=(HashMap<String, Object>) parser.selectQueryParser(query);
+			map=(HashMap<String, Object>) parser.updateQueryParser(query);
 			if(map==null){throw new SQLException("syntax error");}
 			updateMapDecomposer(map);
 			if(colVals.size()==0){throw new SQLException("syntax error");}

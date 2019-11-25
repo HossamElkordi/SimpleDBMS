@@ -353,7 +353,7 @@ public class Parser {
             input=input.substring(0,input.length()-1);
         }*/
         int i=input.indexOf("(");
-        String check=input.substring(0,i-1);
+        String check=input.substring(0,i);
         check=check.trim();
         Map<String,Object> output=new HashMap<>();
         Pattern pattern = Pattern.compile("(create)[\\s]+(table)[\\s]+[\\w]+");
@@ -365,7 +365,7 @@ public class Parser {
         check=check.substring(5);
         check=check.trim();
         output.put("tableName",check);
-        String check2=input.substring(i+1,input.lastIndexOf(")")-1);
+        String check2=input.substring(i+1,input.lastIndexOf(")"));
         check2=check2.trim();
         String[] arrOfStr = check2.split(",");
         int counter=0;
@@ -381,9 +381,9 @@ public class Parser {
             arrOfStr[j]=arrOfStr[j].trim();
             Pattern pattern1=Pattern.compile("[\\w]+[\\s]+(int|varchar)");
             Matcher matcher1=pattern1.matcher(arrOfStr[j].toLowerCase());
-            if(!matcher.matches())
+            if(!matcher1.matches())
                 return null;
-            String Name=arrOfStr[j].substring(0,arrOfStr[j].indexOf(" ")-1);
+            String Name=arrOfStr[j].substring(0,arrOfStr[j].indexOf(" "));
             if(arrOfStr[j].toLowerCase().contains("int")){
                 output.put(Name,"int");
             }else if(arrOfStr[j].toLowerCase().contains("varchar")){
