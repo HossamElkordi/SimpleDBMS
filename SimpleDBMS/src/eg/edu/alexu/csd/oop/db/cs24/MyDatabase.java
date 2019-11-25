@@ -21,6 +21,7 @@ public class MyDatabase implements Database {
 	private XML xmlParser = XML.getInstace();
 	private HashMap<String, String> colVals = new HashMap<String, String>();
 	private MyCache cache;
+	private Parser parser=Parser.getInstace();
 
 	public MyDatabase() {
 		File dir = new File(dbsPath);
@@ -41,15 +42,49 @@ public class MyDatabase implements Database {
 		return null;
 	}
 	
-	public boolean executeStructureQuery(String query) throws SQLException {
+	public boolean executeStructureQuery(String query) throws SQLException {//the one that deals with create and drop
+
 		return false;
 	}
 
-	public Object[][] executeQuery(String query) throws SQLException {
+	public Object[][] executeQuery(String query) throws SQLException {//the one that deals with select
+		HashMap<String,Object> map=new HashMap<>();
+		map=(HashMap<String, Object>) parser.selectQueryParser(query);
+		if(map==null){throw new SQLException("syntax error");}
+		if((selectMapDecomposer(map)).size()==0){throw new SQLException("syntax error");}
+		//at this point map contains 1)table==>(String)tablename  2)fields==>(Arraylist<Strings> contains the field to be shown or * if all the fields are to be show
+		//3)condition==>Arraylist<String>condition that contains the conditions or null if there isn't any
 		return null;
 	}
 
-	public int executeUpdateQuery(String query) throws SQLException {
+	public int executeUpdateQuery(String query) throws SQLException {//the one that deals with update insert and delete
+		HashMap<String ,Object>map;
+		if(parser.typechecker(query)==-1){throw new SQLException("syntax error");}
+		else if(parser.typechecker(query)==5){
+			map=(HashMap<String, Object>) parser.selectQueryParser(query);
+			if(map==null){throw new SQLException("syntax error");}
+			updateMapDecomposer(map);
+			if(colVals.size()==0){throw new SQLException("syntax error");}
+			//at this point you know that the update query has no errors ask hossam to know what is stored where
+		}
+		else if(parser.typechecker(query)==6){
+			map=(HashMap<String, Object>) parser.deleteQueryParser(query);
+			if(map==null){throw new SQLException("syntax error");}
+			deleteMapDecomposer(map);
+			if(colVals.size()==0){throw new SQLException("syntax error");}
+			//at this point you know that the delete query has no errors ask hossam to know what is stored where
+		}
+		else if (parser.typechecker(query)==7){
+			map=(HashMap<String, Object>) parser.insertQueryParser(query);
+			if(map==null){throw new SQLException("syntax error");}
+			addMapDecomposer(map);
+			if(colVals.size()==0){throw new SQLException("syntax error");}
+			//at this point you know that the insert query has no errors ask hossam to know what is stored where
+		}
+
+
+
+
 		return 0;
 	}
 		
