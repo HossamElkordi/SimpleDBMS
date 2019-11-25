@@ -308,6 +308,7 @@ public class MyDatabase implements Database {
 	}
 	
 	private boolean columnMatchValue(Column<?> col, String val) {
+		// corrected
 		if(col == null) {
 			return false;
 		}
