@@ -1,12 +1,9 @@
 package eg.edu.alexu.csd.oop.db.cs24;
 
 import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import javax.swing.JOptionPane;
 
@@ -22,6 +19,7 @@ public class MyDatabase implements Database {
 	private HashMap<String, String> colVals = new HashMap<String, String>();
 	private MyCache cache;
 	private Parser parser=Parser.getInstace();
+	private boolean Drop;
 
 	public MyDatabase() {
 		File dir = new File(dbsPath);
@@ -39,6 +37,7 @@ public class MyDatabase implements Database {
 	}
 	
 	public String createDatabase(String databaseName, boolean dropIfExists) {
+		Drop=dropIfExists;
 		return null;
 	}
 	
@@ -49,22 +48,57 @@ public class MyDatabase implements Database {
 			map= (HashMap<String, Object>) parser.createdatabase(query);
 			if(map==null){throw new SQLException("syntax error");}
 			//at this point the query is correct and tha map contains the database's name
+			dbName= (String) map.get("DataBaseName");
+			File NewDatabase =new File(dbsPath+System.getProperty("file.separator")+dbName);
+			if(!NewDatabase.exists()||Drop)
+				NewDatabase.mkdirs();
+			return true;
 		}
 		else if(parser.typechecker(query)==1){//create table
 			map= (HashMap<String, Object>) parser.createtable(query);
 			if(map==null){throw new SQLException("syntax error");}
 			//at this point the query is correct and tha map contains the table's name and field/type (key,value pair)
+			Iterator it = map.entrySet().iterator();
+			ArrayList<String>columns=new ArrayList<>();
+			tableName=(String)map.get("tableName");
+			map.remove("tableName");
+			while(it.hasNext())
+			{
+					Map.Entry pair = (Map.Entry)it.next();
+					columns.add( pair.getKey()+ ", "+pair.getKey());
+			}
+			File NewTable =new File(dbsPath+System.getProperty("file.separator")+dbName+System.getProperty("file.separator")+tableName);
+			if(!NewTable.exists()||Drop)
+			{
+				table=new Table(tableName,columns);
+				table.setPath(dbsPath+System.getProperty("file.separator")+dbName+System.getProperty("file.separator")+tableName);
+				table.createXML();
+			}
+			else
+				table=xmlParser.LoadTable(dbsPath+System.getProperty("file.separator")+dbName+System.getProperty("file.separator")+tableName);
+			return true;
 		}
 		else if(parser.typechecker(query)==2){//drop database
 			map= (HashMap<String, Object>) parser.dropdatabase(query);
 			if(map==null){throw new SQLException("syntax error");}
 			//at this point the query is correct and tha map contains the database's name(you also need to check if a database with this name exists)
+			File database=new File(dbsPath+System.getProperty("file.separator")+dbName);
+			if(database.exists())
+			{
+				delete(database);
+				return true;
+			}
 		}
 		else if(parser.typechecker(query)==3){//drop table
 			map= (HashMap<String, Object>) parser.droptable(query);
 			if(map==null){throw new SQLException("syntax error");}
 			//at this point the query is correct and tha map contains the table's name(you also need to check if a database with this name exists)
-
+			File Table =new File(dbsPath+System.getProperty("file.separator")+dbName+System.getProperty("file.separator")+tableName);
+			if(Table.exists())
+			{
+				Table.delete();
+				return true;
+			}
 		}
 		return false;
 	}
@@ -77,7 +111,16 @@ public class MyDatabase implements Database {
 		//at this point map contains 1)table==>(String)tablename  2)fields==>(Arraylist<Strings> contains the field to be shown or * if all the fields are to be show
 		//3)condition==>Arraylist<String>condition that contains the conditions or null if there isn't any
 		//(you also need to check if a database with this name exists)
-		return null;
+		File Table =new File(dbsPath+System.getProperty("file.separator")+dbName+System.getProperty("file.separator")+map.get("table"));
+		if(Table.exists())
+		{
+			table=xmlParser.LoadTable(dbsPath+System.getProperty("file.separator")+dbName+System.getProperty("file.separator")+map.get("table"));
+			ArrayList<?>ColumnNames= (ArrayList<String>) map.get("fields");
+			if(ColumnNames.contains("*"))
+				ColumnNames=table.getColumns();
+			return table.SelectRecord((ArrayList<String>) map.get("condition"),(ArrayList<String>)ColumnNames);
+		}
+		throw new SQLException("Table doesn't exist");
 	}
 
 	public int executeUpdateQuery(String query) throws SQLException {//the one that deals with update insert and delete
@@ -90,6 +133,15 @@ public class MyDatabase implements Database {
 			if(colVals.size()==0){throw new SQLException("syntax error");}
 			//at this point you know that the update query has no errors ask hossam to know what is stored where
 			//(you also need to check if a database with this name exists)
+			File Table =new File(dbsPath+System.getProperty("file.separator")+dbName+System.getProperty("file.separator")+map.get("table"));
+			if(Table.exists())
+			{
+				table=xmlParser.LoadTable(dbsPath+System.getProperty("file.separator")+dbName+System.getProperty("file.separator")+map.get("table"));
+				ArrayList<?>ColumnNames= (ArrayList<String>) map.get("fields");
+				if(ColumnNames.contains("*"))
+					ColumnNames=table.getColumns();
+				table.updateRecord(ColumnNames,(ArrayList<String>) map.get("condition"));
+			}
 		}
 		else if(parser.typechecker(query)==6){
 			map=(HashMap<String, Object>) parser.deleteQueryParser(query);
@@ -224,5 +276,33 @@ public class MyDatabase implements Database {
 		}
 		return false;
 	}
-	
+
+	public static void delete(File file) {
+
+		if(file.isDirectory()){
+			if(file.list().length==0)
+				file.delete();
+			else{
+
+				//list all the directory contents
+				String files[] = file.list();
+
+				for (String temp : files) {
+					//construct the file structure
+					File fileDelete = new File(file, temp);
+
+					//recursive delete
+					delete(fileDelete);
+				}
+
+				//check the directory again, if empty then delete it
+				if(file.list().length==0)
+					file.delete();
+			}
+
+		}
+		else
+			//if file, then delete it
+			file.delete();
+	}
 }
