@@ -309,6 +309,9 @@ public class MyDatabase implements Database {
 	}
 	
 	private boolean columnMatchValue(Column<?> col, String val) {
+		if(col == null) {
+			return false;
+		}
 		if(col.getType().getSimpleName().equals("Integer")) {
 			return !val.contains("\'");
 		}
