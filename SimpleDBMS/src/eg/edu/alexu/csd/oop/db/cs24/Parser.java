@@ -353,6 +353,8 @@ public class Parser {
             input=input.substring(0,input.length()-1);
         }*/
         int i=input.indexOf("(");
+        if(i==-1)
+            return null;
         String check=input.substring(0,i);
         check=check.trim();
         Map<String,Object> output=new HashMap<>();
