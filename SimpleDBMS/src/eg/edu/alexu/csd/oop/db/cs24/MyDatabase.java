@@ -43,7 +43,29 @@ public class MyDatabase implements Database {
 	}
 	
 	public boolean executeStructureQuery(String query) throws SQLException {//the one that deals with create and drop
+		HashMap<String,Object> map;
+		if(parser.typechecker(query)==-1){throw new SQLException("syntax error");}
+		else if(parser.typechecker(query)==0){//create database
+			map= (HashMap<String, Object>) parser.createdatabase(query);
+			if(map==null){throw new SQLException("syntax error");}
+			//at this point the query is correct and tha map contains the database's name
+		}
+		else if(parser.typechecker(query)==1){//create table
+			map= (HashMap<String, Object>) parser.createtable(query);
+			if(map==null){throw new SQLException("syntax error");}
+			//at this point the query is correct and tha map contains the table's name and field/type (key,value pair)
+		}
+		else if(parser.typechecker(query)==2){//drop database
+			map= (HashMap<String, Object>) parser.dropdatabase(query);
+			if(map==null){throw new SQLException("syntax error");}
+			//at this point the query is correct and tha map contains the database's name(you also need to check if a database with this name exists)
+		}
+		else if(parser.typechecker(query)==3){//drop table
+			map= (HashMap<String, Object>) parser.droptable(query);
+			if(map==null){throw new SQLException("syntax error");}
+			//at this point the query is correct and tha map contains the table's name(you also need to check if a database with this name exists)
 
+		}
 		return false;
 	}
 
@@ -54,6 +76,7 @@ public class MyDatabase implements Database {
 		if((selectMapDecomposer(map)).size()==0){throw new SQLException("syntax error");}
 		//at this point map contains 1)table==>(String)tablename  2)fields==>(Arraylist<Strings> contains the field to be shown or * if all the fields are to be show
 		//3)condition==>Arraylist<String>condition that contains the conditions or null if there isn't any
+		//(you also need to check if a database with this name exists)
 		return null;
 	}
 
@@ -66,6 +89,7 @@ public class MyDatabase implements Database {
 			updateMapDecomposer(map);
 			if(colVals.size()==0){throw new SQLException("syntax error");}
 			//at this point you know that the update query has no errors ask hossam to know what is stored where
+			//(you also need to check if a database with this name exists)
 		}
 		else if(parser.typechecker(query)==6){
 			map=(HashMap<String, Object>) parser.deleteQueryParser(query);
@@ -73,6 +97,7 @@ public class MyDatabase implements Database {
 			deleteMapDecomposer(map);
 			if(colVals.size()==0){throw new SQLException("syntax error");}
 			//at this point you know that the delete query has no errors ask hossam to know what is stored where
+			//(you also need to check if a database with this name exists)
 		}
 		else if (parser.typechecker(query)==7){
 			map=(HashMap<String, Object>) parser.insertQueryParser(query);
@@ -80,6 +105,7 @@ public class MyDatabase implements Database {
 			addMapDecomposer(map);
 			if(colVals.size()==0){throw new SQLException("syntax error");}
 			//at this point you know that the insert query has no errors ask hossam to know what is stored where
+			//(you also need to check if a database with this name exists)
 		}
 
 
