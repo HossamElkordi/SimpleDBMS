@@ -143,7 +143,6 @@ public class Parser {
         );
 	    Matcher z=a.matcher(input.toLowerCase());
 	    if(!z.matches())return null;
-	    input=input.substring(0,input.length()-1);
 	    ConditionParser cp=ConditionParser.getInstance();
         Map<String,Object> output=new HashMap<>();
         int i=0,conditioni,seti,updatei;
