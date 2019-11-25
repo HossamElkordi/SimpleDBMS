@@ -19,7 +19,7 @@ public class MyDatabase implements Database {
 	private ArrayList<String> condition;
 	private Table table;
 	private XML xmlParser = XML.getInstace();
-	private HashMap<String, String> colVals;
+	private HashMap<String, String> colVals = new HashMap<String, String>();
 	private MyCache cache;
 
 	public MyDatabase() {
@@ -54,43 +54,114 @@ public class MyDatabase implements Database {
 	}
 		
 	@SuppressWarnings("unchecked")
-	private void addMapDecomposer(HashMap<String, Object> map) throws SQLException {
-		if(!this.tableName.equals(map.get("table").toString())) {
-			this.table = xmlParser.LoadTable(this.dbsPath + System.getProperty("file.separator") + this.dbName + map.get("table").toString());
-			if(this.table == null) {
-				JOptionPane.showMessageDialog(null, "Table doesn't exist!");
-				return;
-			}
-			this.tableName = map.get("table").toString();
-			map.remove("table");
+	private void addMapDecomposer(HashMap<String, Object> map) {
+		getBasicFromMap(map);
+		map.remove("table");
+		map.remove("condition");
+		
+		if(table.getColumns().size() != map.size()) {
+			this.colVals = null;
+			return;
 		}
-		this.condition = (ArrayList<String>) map.get("condition");
+		if (map.size() == table.getColumns().size()) {
+			if (map.get("" + 0) == null) {
+				Set<?> set = map.entrySet();
+				Iterator<?> iter = set.iterator();
+				while(iter.hasNext()) {
+					Map.Entry<String, String> m = (Map.Entry<String, String>) iter.next();
+					if(!columnMatchValue(this.table.getColumnByName(m.getKey()), m.getValue())) {
+						this.colVals.clear();
+						return;
+					}
+					this.colVals.put(m.getKey(), m.getValue());
+				}
+			}else {
+				for (int i = 0; i < map.size(); i++) {
+					if(!columnMatchValue(this.table.getColumns().get(i), map.get("" + i).toString())) {
+						this.colVals.clear();
+						return;
+					}
+					this.colVals.put(this.table.getColumns().get(i).getName(), map.get("" + i).toString());
+				}
+			}
+		}else {
+			this.colVals.clear();
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void updateMapDecomposer(HashMap<String, Object> map) {
+		getBasicFromMap(map);
+		map.remove("table");
 		map.remove("condition");
 		
 		Set<?> set = map.entrySet();
 		Iterator<?> iter = set.iterator();
-		int count = 0;
-		boolean check = false;
-		
-		while (iter.hasNext()) {
+		while(iter.hasNext()) {
 			Map.Entry<String, String> m = (Map.Entry<String, String>) iter.next();
-			if(table.getColumnByName(m.getKey()) == null) {
-				if(map.size() == table.getColumns().size()) {
-					
-				}else {
-					throw new SQLException();
-				}
-			}else {
-				for(int i = 0; ((i < table.getColumns().size()) && !check); i++) {
-					if(map.get(table.getColumns().get(i).getName()) == null) {
-						throw new SQLException();
-					}
-				}
-				check = true;
+			if(!columnMatchValue(this.table.getColumnByName(m.getKey()), m.getValue())) {
+				this.colVals.clear();
+				return;
 			}
-			
-			
+			this.colVals.put(m.getKey(), m.getValue());
 		}
+	}
+	
+	private void deleteMapDecomposer(HashMap<String, Object> map) {
+		getTableFromMap(map);
+		map.remove("table");
+		map.remove("condition");
+		this.colVals.clear();
+	}
+	
+	@SuppressWarnings("unchecked")
+	private ArrayList<String> selectMapDecomposer(HashMap<String, Object> map) {
+		getBasicFromMap(map);
+		ArrayList<String> colNames = (ArrayList<String>)map.get("fields");
+		if((colNames.size() == 1) && (colNames.get(0).equals("*"))) {
+			colNames.clear();
+			for (int i = 0; i < this.table.getColumns().size(); i++) {
+				colNames.add(this.table.getColumns().get(i).getName());
+			}
+		}else if((colNames.size() == 1) && (!colNames.get(0).equals("*"))) {
+			colNames.clear();
+		}else {
+			for (int i = 0; i < colNames.size(); i++) {
+				if(this.table.getColumnByName(colNames.get(i)) == null) {
+					colNames.clear();
+					return colNames;
+				}
+			}
+		}
+		return colNames;
+	}
+
+	@SuppressWarnings("unchecked")
+	private void getBasicFromMap(HashMap<String, Object> map) {
+		getTableFromMap(map);
+		this.condition = (ArrayList<String>)map.get("condition");
+	}
+
+	private void getTableFromMap(HashMap<String, Object> map) {
+		if(!map.get("table").toString().equals(this.table.getName())) {
+			cache.addToCache(table);
+			table = cache.retrieveFromCache(map.get("table").toString());
+			if(table == null) {
+				this.tableName = map.get("condition").toString();
+				cache.addToCache(xmlParser.LoadTable(dbsPath + System.getProperty("file.separator") + dbName + System.getProperty("file.separator") + tableName + ".xml"));
+				table = cache.retrieveFromCache(map.get("table").toString());
+			}
+		}
+	}
+	
+	private boolean columnMatchValue(Column<?> col, String val) {
+		if(col.getType().getSimpleName().equals("Integer")) {
+			return !val.contains("\'");
+		}
+		if(col.getType().getSimpleName().equals("String")) {
+			return val.contains("\'");
+		}
+		return false;
 	}
 	
 }

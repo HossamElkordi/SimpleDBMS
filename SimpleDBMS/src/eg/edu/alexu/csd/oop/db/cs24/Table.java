@@ -44,18 +44,6 @@ public class Table {
 				this.columns.add(new Column<String>(columns.get(i).split(", ")[0], String.class));
 			}
 		}
-		
-//		Set<?> set = columns.entrySet();
-//		Iterator<?> iter = set.iterator();
-//		
-//		while (iter.hasNext()) {
-//			Map.Entry<String, String> m = (Map.Entry<String, String>) iter.next();
-//			if(m.getValue().contains("int")) {
-//				this.columns.add(new Column<Integer>(m.getKey(), Integer.class));
-//			}else {
-//				this.columns.add(new Column<String>(m.getKey(), String.class));
-//			}
-//		}
 	}
 	
 	public void setPath(String path) {
@@ -83,8 +71,6 @@ public class Table {
 	@SuppressWarnings("unchecked")
 	public void addRecord(HashMap<String, String> record) {
 
-//		Document doc = getDocument();
-		
 		Set<?> set = record.entrySet();
 		Iterator<?> iter = set.iterator();
 		
@@ -104,7 +90,6 @@ public class Table {
 					((Column<String>)col).add(m.getValue());
 				}
 			}
-//			writeInFile();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -113,8 +98,6 @@ public class Table {
 	@SuppressWarnings("unchecked")
 	public void updateRecord(HashMap<String, String> colValues, ArrayList<String> condition) {
 
-//		Document doc = getDocument();
-		
 		Set<?> set = colValues.entrySet();
 		Iterator<?> iter = set.iterator();
 		
@@ -129,10 +112,12 @@ public class Table {
 			ArrayList<?> elements = col.getElements();
 			for (int i = 0; i < colList.getLength(); i++) {
 				reps.clear();
-				for (int j = 0; j < colsNeeded.size(); j++) {
-					reps.add((getColumnByName(colsNeeded.get(j)).getElements().get(i)).toString());
+				if (condition != null) {
+					for (int j = 0; j < colsNeeded.size(); j++) {
+						reps.add((getColumnByName(colsNeeded.get(j)).getElements().get(i)).toString());
+					} 
 				}
-				if(cp.evaluate((ArrayList<String>) condition.clone(), reps)) {
+				if(condition == null || cp.evaluate((ArrayList<String>) condition.clone(), reps)) {
 					// update from xml
 					colList.item(i).setTextContent(m.getValue());
 					// update in the table itself
@@ -144,13 +129,11 @@ public class Table {
 				}
 			}
 		}
-//		writeInFile();
 	}
 	
 	@SuppressWarnings("unchecked")
 	public void deleteRecord(ArrayList<String> condition) {
 
-//		Document doc = getDocument();
 		ArrayList<String> colsNeeded = getColsNeeded(condition);
 		ArrayList<String> reps = new ArrayList<String>();
 
@@ -158,10 +141,12 @@ public class Table {
 
 		for (int i = 0; i < count; i++) {
 			reps.clear();
-			for (int j = 0; j < colsNeeded.size(); j++) {
-				reps.add((getColumnByName(colsNeeded.get(j)).getElements().get(i)).toString());
+			if (condition != null) {
+				for (int j = 0; j < colsNeeded.size(); j++) {
+					reps.add((getColumnByName(colsNeeded.get(j)).getElements().get(i)).toString());
+				} 
 			}
-			if(cp.evaluate((ArrayList<String>) condition.clone(), reps)) {
+			if(condition == null || cp.evaluate((ArrayList<String>) condition.clone(), reps)) {
 				for (int j = 0; j < this.columns.size(); j++) {
 					// delete from xml
 					Node col = doc.getElementById(this.columns.get(j).getName());
@@ -175,13 +160,11 @@ public class Table {
 				count--;
 			}
 		}
-//		writeInFile();
 	}
 
 	@SuppressWarnings("unchecked")
 	public Object[][] SelectRecord(ArrayList<String> condition, ArrayList<String> ColumnNames) {
 
-//		Document doc = getDocument();
 		ArrayList<String> colsNeeded = getColsNeeded(condition);
 		ArrayList<String> reps = new ArrayList<String>();
 
@@ -189,10 +172,12 @@ public class Table {
 		ArrayList<ArrayList<Object>>answer=new ArrayList<>();
 		for (int i = 0; i < this.columns.get(0).getElements().size(); ++i) {
 			reps.clear();
-			for (String s : colsNeeded) {
-				reps.add((getColumnByName(s).getElements().get(i)).toString());
+			if (condition != null) {
+				for (String s : colsNeeded) {
+					reps.add((getColumnByName(s).getElements().get(i)).toString());
+				} 
 			}
-			if(cp.evaluate((ArrayList<String>) condition.clone(), reps)) {
+			if(condition == null || cp.evaluate((ArrayList<String>) condition.clone(), reps)) {
 				answer.add(new ArrayList<>());
 				for (int j = 0; j < this.columns.size(); j++) {
 					Node col = doc.getElementById(this.columns.get(j).getName());
