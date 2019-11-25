@@ -140,7 +140,7 @@ public class Parser {
 	public Map<String,Object> updateQueryParser(String input){
 	    Pattern a=Pattern.compile(
 	            "((update)|(UPDATE))[\\s]+[\\S]+[\\s]+((set)|(SET))[\\s]+[\\S]+[\\s]*[=][\\s]*(['][^']*[']|[^'])" +
-                        "([\\s]*([,][\\s]+[\\S]+[\\s]*[=][\\s]*(['][^']*[']|[^']))*)[\\s]*(((WHERE)|(where))[^;]+)?[;]"
+                        "([\\s]*([,][\\s]+[\\S]+[\\s]*[=][\\s]*(['][^']*[']|[^']))*)[\\s]*(((WHERE)|(where))[^;]+)?"
         );
 	    Matcher z=a.matcher(input.toLowerCase());
 	    if(!z.matches())return null;
@@ -170,7 +170,7 @@ public class Parser {
     }
     public Map<String,Object> selectQueryParser(String input){ConditionParser cp=ConditionParser.getInstance();
         Pattern a=Pattern.compile(
-                "((select)|(SELECT))[\\s]+([*]|([^,\\s]+[\\s]*([,][\\s]*[^,\\s]+)*))[\\s]+((FROM)|(from))[\\s]+[\\S]+([\\s]+((WHERE)|(where))[^;]+)*[;]"
+                "((select)|(SELECT))[\\s]+([*]|([^,\\s]+[\\s]*([,][\\s]*[^,\\s]+)*))[\\s]+((FROM)|(from))[\\s]+[\\S]+([\\s]+((WHERE)|(where))[^;]+)*"
         );
         Matcher z=a.matcher(input.toLowerCase());
         if(!z.matches())return null;
@@ -205,7 +205,7 @@ public class Parser {
                 "(insert)[\\s]+(into)[\\s]+[\\S]+[\\s]+(([\\s]*[\\(][\\s]*[^\\s,\\(\\)]+([\\s]*[,][\\s]*[^,\\s\\(\\)]+)*" +
                         "[\\s]*[\\)][\\s]*(values)[\\s]*+[\\s]*[\\(][\\s]*(([^\\s,\\(\\)]+)|(['][^']+[']))([\\s]*[,][\\s]*" +
                         "(([^,\\s]+)|(['][^']+['])))*[\\s]*[\\)][\\s]*)|([\\s]*(values)[\\s]*+[\\s]*[\\(][\\s]*(([^\\s,\\(\\)]+)" +
-                        "|(['][^']+[']))([\\s]*[,][\\s]*(([^,\\s\\(\\)]+)|(['][^']+['])))*[\\s]*[\\)][\\s]*))[;]"
+                        "|(['][^']+[']))([\\s]*[,][\\s]*(([^,\\s\\(\\)]+)|(['][^']+['])))*[\\s]*[\\)][\\s]*))"
         );
         Matcher z=a.matcher(input.toLowerCase());
         if(!z.matches())return null;
@@ -292,7 +292,7 @@ public class Parser {
    }
 
    public Map<String,Object> deleteQueryParser(String input){ConditionParser cp=ConditionParser.getInstance();
-       Pattern a=Pattern.compile("(delete)[\\s]+(from)[\\s]+[^\\s]+[\\s]*([\\s]+(where)[\\s]+[^;]+)?[\\s]*[;]");
+       Pattern a=Pattern.compile("(delete)[\\s]+(from)[\\s]+[^\\s]+[\\s]*([\\s]+(where)[\\s]+[^;]+)?[\\s]*");
 	   Map<String ,Object> output=new HashMap<>();
        Matcher z=a.matcher(input.toLowerCase());
        if(!z.matches())return null;
@@ -313,7 +313,7 @@ public class Parser {
     public Map<String,Object> createdatabase(String input){
         input=input.trim();
         Map<String,Object> output=new HashMap<>();
-        Pattern pattern = Pattern.compile("(create)[\\s]+(database)[\\s]+[\\w]+[\\s]*(;)");
+        Pattern pattern = Pattern.compile("(create)[\\s]+(database)[\\s]+[\\w]+[\\s]*");
         Matcher matcher=pattern.matcher(input.toLowerCase());
         if(!matcher.matches())
             return null;
@@ -329,7 +329,7 @@ public class Parser {
     public Map<String,Object> dropdatabase(String input){
         input=input.trim();
         Map<String,Object> output=new HashMap<>();
-        Pattern pattern = Pattern.compile("(drop)[\\s]+(database)[\\s]+[\\w]+[\\s]*(;)");
+        Pattern pattern = Pattern.compile("(drop)[\\s]+(database)[\\s]+[\\w]+[\\s]*");
         Matcher matcher=pattern.matcher(input.toLowerCase());
         if(!matcher.matches())
             return null;
@@ -392,7 +392,7 @@ public class Parser {
     public Map<String,Object> droptable(String input){
         input=input.trim();
         Map<String,Object> output=new HashMap<>();
-        Pattern pattern = Pattern.compile("(drop)[\\s]+(table)[\\s]+[\\w]+[\\s]*(;)");
+        Pattern pattern = Pattern.compile("(drop)[\\s]+(table)[\\s]+[\\w]+[\\s]*");
         Matcher matcher=pattern.matcher(input.toLowerCase());
         if(!matcher.matches())
             return null;
