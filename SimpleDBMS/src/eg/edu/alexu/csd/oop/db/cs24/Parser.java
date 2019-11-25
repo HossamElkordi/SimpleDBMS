@@ -198,9 +198,9 @@ public class Parser {
     }
 
    public Map<String,Object> insertQueryParser(String input){
-        input.replace(")"," ) ");
-        input.replace("("," ( ");
-        input.replace(","," , ");
+        input=input.replace(")"," ) ");
+        input= input.replace("("," ( ");
+        input=input.replace(","," , ");
         Pattern a=Pattern.compile(
                 "(insert)[\\s]+(into)[\\s]+[\\S]+[\\s]+(([\\s]*[\\(][\\s]*[^\\s,\\(\\)]+([\\s]*[,][\\s]*[^,\\s\\(\\)]+)*" +
                         "[\\s]*[\\)][\\s]*(values)[\\s]*+[\\s]*[\\(][\\s]*(([^\\s,\\(\\)]+)|(['][^']+[']))([\\s]*[,][\\s]*" +
