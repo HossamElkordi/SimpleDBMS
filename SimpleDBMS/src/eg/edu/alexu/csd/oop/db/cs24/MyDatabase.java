@@ -47,8 +47,9 @@ public class MyDatabase implements Database {
 	
 	public boolean executeStructureQuery(String query) throws SQLException {//the one that deals with create and drop
 		HashMap<String,Object> map;
-		if(parser.typechecker(query)==-1){throw new SQLException("syntax error");}
-		else if(parser.typechecker(query)==0){//create database
+		int TypeChecker=parser.typechecker(query);
+		if(TypeChecker==-1){throw new SQLException("syntax error");}
+		else if(TypeChecker==0){//create database
 			map= (HashMap<String, Object>) parser.createdatabase(query);
 			if(map==null){throw new SQLException("syntax error");}
 			//at this point the query is correct and tha map contains the database's name
@@ -64,7 +65,7 @@ public class MyDatabase implements Database {
 //			}
 
 		}
-		else if(parser.typechecker(query)==1){//create table
+		else if(TypeChecker==1){//create table
 			map= (HashMap<String, Object>) parser.createtable(query);
 			if(map==null){throw new SQLException("syntax error");}
 			//at this point the query is correct and tha map contains the table's name and field/type (key,value pair)
@@ -94,7 +95,7 @@ public class MyDatabase implements Database {
 				return true;
 			}
 		}
-		else if(parser.typechecker(query)==2){//drop database
+		else if(TypeChecker==2){//drop database
 			map= (HashMap<String, Object>) parser.dropdatabase(query);
 			if(map==null){throw new SQLException("syntax error");}
 			//at this point the query is correct and tha map contains the database's name(you also need to check if a database with this name exists)
@@ -105,7 +106,7 @@ public class MyDatabase implements Database {
 				return true;
 			}
 		}
-		else if(parser.typechecker(query)==3){//drop table
+		else if(TypeChecker==3){//drop table
 			map= (HashMap<String, Object>) parser.droptable(query);
 			if(map==null){throw new SQLException("syntax error");}
 			//at this point the query is correct and tha map contains the table's name(you also need to check if a database with this name exists)
@@ -143,8 +144,9 @@ public class MyDatabase implements Database {
 
 	public int executeUpdateQuery(String query) throws SQLException {//the one that deals with update insert and delete
 		HashMap<String ,Object>map;
-		if(parser.typechecker(query)==-1){throw new SQLException("syntax error");}
-		else if(parser.typechecker(query)==5){
+		int TypeChecker=parser.typechecker(query);
+		if(TypeChecker==-1){throw new SQLException("syntax error");}
+		else if(TypeChecker==5){
 			map=(HashMap<String, Object>) parser.selectQueryParser(query);
 			if(map==null){throw new SQLException("syntax error");}
 			updateMapDecomposer(map);
@@ -158,7 +160,7 @@ public class MyDatabase implements Database {
 				cache.addToCache(table);
 			}
 		}
-		else if(parser.typechecker(query)==6){
+		else if(TypeChecker==6){
 			map=(HashMap<String, Object>) parser.deleteQueryParser(query);
 			if(map==null){throw new SQLException("syntax error");}
 			deleteMapDecomposer(map);
@@ -172,7 +174,7 @@ public class MyDatabase implements Database {
 				cache.addToCache(table);
 			}
 		}
-		else if (parser.typechecker(query)==7){
+		else if (TypeChecker==7){
 			map=(HashMap<String, Object>) parser.insertQueryParser(query);
 			if(map==null){throw new SQLException("syntax error");}
 			addMapDecomposer(map);
