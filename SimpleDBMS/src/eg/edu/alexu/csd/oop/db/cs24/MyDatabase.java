@@ -51,8 +51,11 @@ public class MyDatabase implements Database {
 			dbName= (String) map.get("DataBaseName");
 			File NewDatabase =new File(dbsPath+System.getProperty("file.separator")+dbName);
 			if(!NewDatabase.exists()||Drop)
+			{
 				NewDatabase.mkdirs();
-			return true;
+				return true;
+			}
+			
 		}
 		else if(parser.typechecker(query)==1){//create table
 			map= (HashMap<String, Object>) parser.createtable(query);
@@ -71,12 +74,18 @@ public class MyDatabase implements Database {
 			if(!NewTable.exists()||Drop)
 			{
 				table=new Table(tableName,columns);
-				table.setPath(dbsPath+System.getProperty("file.separator")+dbName+System.getProperty("file.separator")+tableName);
+				table.setPath(dbsPath+System.getProperty("file.separator")+dbName+System.getProperty("file.separator")+tableName+".xml");
 				table.createXML();
+				cache.addToCache(table);
+				return true;
 			}
 			else
+			{
 				table=xmlParser.LoadTable(dbsPath+System.getProperty("file.separator")+dbName+System.getProperty("file.separator")+tableName);
-			return true;
+				cache.retrieveFromCache(tableName);
+				cache.addToCache(table);
+				return true;
+			}
 		}
 		else if(parser.typechecker(query)==2){//drop database
 			map= (HashMap<String, Object>) parser.dropdatabase(query);
@@ -93,10 +102,13 @@ public class MyDatabase implements Database {
 			map= (HashMap<String, Object>) parser.droptable(query);
 			if(map==null){throw new SQLException("syntax error");}
 			//at this point the query is correct and tha map contains the table's name(you also need to check if a database with this name exists)
-			File Table =new File(dbsPath+System.getProperty("file.separator")+dbName+System.getProperty("file.separator")+tableName);
-			if(Table.exists())
+			File Table =new File(dbsPath+System.getProperty("file.separator")+dbName+System.getProperty("file.separator")+map.get("tableName")+".xml");
+			File DTD =new File(dbsPath+System.getProperty("file.separator")+dbName+System.getProperty("file.separator")+map.get("tableName")+".dtd");
+			if(Table.exists()&&DTD.exists())
 			{
 				Table.delete();
+				DTD.delete();
+				cache.retrieveFromCache((String) map.get("tableName"));
 				return true;
 			}
 		}
@@ -112,8 +124,11 @@ public class MyDatabase implements Database {
 		//at this point map contains 1)table==>(String)tablename  2)fields==>(Arraylist<Strings> contains the field to be shown or * if all the fields are to be show
 		//3)condition==>Arraylist<String>condition that contains the conditions or null if there isn't any
 		//(you also need to check if a database with this name exists)
+
 		if(table != null)
 		{
+			cache.retrieveFromCache((String) map.get("table"));
+			cache.addToCache(table);
 			return table.SelectRecord(this.condition,names);
 		}
 		throw new SQLException("Table doesn't exist");
@@ -132,6 +147,8 @@ public class MyDatabase implements Database {
 			if((table != null) && (colVals.size() != 0))
 			{
 				table.updateRecord(this.colVals, this.condition);
+				cache.retrieveFromCache((String) map.get("table"));
+				cache.addToCache(table);
 			}
 		}
 		else if(parser.typechecker(query)==6){
@@ -144,6 +161,8 @@ public class MyDatabase implements Database {
 			if((table != null) && (colVals.size() == 0))
 			{
 				table.deleteRecord(this.condition);
+				cache.retrieveFromCache((String) map.get("table"));
+				cache.addToCache(table);
 			}
 		}
 		else if (parser.typechecker(query)==7){
@@ -156,6 +175,8 @@ public class MyDatabase implements Database {
 			if((table != null) && (colVals.size() != 0))
 			{
 				table.addRecord(this.colVals);
+				cache.retrieveFromCache((String) map.get("table"));
+				cache.addToCache(table);
 			}
 		}
 
