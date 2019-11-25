@@ -41,7 +41,11 @@ public class MyDatabase implements Database {
 		dbName=databaseName;
 		File NewDatabase =new File(dbsPath+System.getProperty("file.separator")+dbName);
 		if(!NewDatabase.exists()||Drop)
+		{
+			if(NewDatabase.exists())
+				delete(NewDatabase);
 			NewDatabase.mkdirs();
+		}
 		return dbsPath+System.getProperty("file.separator")+dbName;
 	}
 	
@@ -114,8 +118,8 @@ public class MyDatabase implements Database {
 			File DTD =new File(dbsPath+System.getProperty("file.separator")+dbName+System.getProperty("file.separator")+map.get("tableName")+".dtd");
 			if(Table.exists()&&DTD.exists())
 			{
-				Table.delete();
-				DTD.delete();
+				delete(Table);
+				delete(DTD);
 				cache.retrieveFromCache((String) map.get("tableName"));
 				return true;
 			}
