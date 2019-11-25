@@ -83,21 +83,25 @@ public class MyDatabase implements Database {
 					columns.add( pair.getKey()+ ", "+pair.getValue());
 			}
 			File NewTable =new File(dbsPath+System.getProperty("file.separator")+dbName+System.getProperty("file.separator")+tableName);
-			if(!NewTable.exists()||Drop)
+			if(dbName!="")
 			{
-				table=new Table(tableName,columns);
-				table.setPath(dbsPath+System.getProperty("file.separator")+dbName+System.getProperty("file.separator")+tableName+".xml");
-				table.createXML();
-				cache.addToCache(table);
-				return true;
+				if(!NewTable.exists()||Drop)
+				{
+					table=new Table(tableName,columns);
+					table.setPath(dbsPath+System.getProperty("file.separator")+dbName+System.getProperty("file.separator")+tableName+".xml");
+					table.createXML();
+					cache.addToCache(table);
+					return true;
+				}
+				else
+				{
+					table=xmlParser.LoadTable(dbsPath+System.getProperty("file.separator")+dbName+System.getProperty("file.separator")+tableName);
+					cache.retrieveFromCache(tableName);
+					cache.addToCache(table);
+					return true;
+				}
 			}
-			else
-			{
-				table=xmlParser.LoadTable(dbsPath+System.getProperty("file.separator")+dbName+System.getProperty("file.separator")+tableName);
-				cache.retrieveFromCache(tableName);
-				cache.addToCache(table);
-				return true;
-			}
+			throw new SQLException("No database found");
 		}
 		else if(TypeChecker==2){//drop database
 			map= (HashMap<String, Object>) parser.dropdatabase(query);
