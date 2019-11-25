@@ -144,6 +144,7 @@ public class MyDatabase implements Database {
 
 	public int executeUpdateQuery(String query) throws SQLException {//the one that deals with update insert and delete
 		HashMap<String ,Object>map;
+		int updatedRows = 0;
 		int TypeChecker=parser.typechecker(query);
 		if(TypeChecker==-1){throw new SQLException("syntax error");}
 		else if(TypeChecker==5){
@@ -155,7 +156,7 @@ public class MyDatabase implements Database {
 			//(you also need to check if a database with this name exists)
 			if((table != null) && (colVals.size() != 0))
 			{
-				table.updateRecord(this.colVals, this.condition);
+				updatedRows = table.updateRecord(this.colVals, this.condition);
 				cache.retrieveFromCache((String) map.get("table"));
 				cache.addToCache(table);
 			}
@@ -169,7 +170,7 @@ public class MyDatabase implements Database {
 			//(you also need to check if a database with this name exists)
 			if((table != null) && (colVals.size() == 0))
 			{
-				table.deleteRecord(this.condition);
+				updatedRows = table.deleteRecord(this.condition);
 				cache.retrieveFromCache((String) map.get("table"));
 				cache.addToCache(table);
 			}
@@ -183,12 +184,12 @@ public class MyDatabase implements Database {
 			//(you also need to check if a database with this name exists)
 			if((table != null) && (colVals.size() != 0))
 			{
-				table.addRecord(this.colVals);
+				updatedRows = table.addRecord(this.colVals);
 				cache.retrieveFromCache((String) map.get("table"));
 				cache.addToCache(table);
 			}
 		}
-		return table.getColumns().get(0).getElements().size();
+		return updatedRows;
 	}
 		
 	@SuppressWarnings("unchecked")

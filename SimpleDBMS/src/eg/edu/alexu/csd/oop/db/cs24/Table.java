@@ -69,7 +69,7 @@ public class Table {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public void addRecord(HashMap<String, String> record) {
+	public int addRecord(HashMap<String, String> record) {
 
 		Set<?> set = record.entrySet();
 		Iterator<?> iter = set.iterator();
@@ -90,19 +90,23 @@ public class Table {
 					((Column<String>)col).add(m.getValue());
 				}
 			}
+			return 1;
 		} catch (Exception e) {
 			e.printStackTrace();
+			return 0;
 		}
 	}
 	
 	@SuppressWarnings("unchecked")
-	public void updateRecord(HashMap<String, String> colValues, ArrayList<String> condition) {
+	public int updateRecord(HashMap<String, String> colValues, ArrayList<String> condition) {
 
 		Set<?> set = colValues.entrySet();
 		Iterator<?> iter = set.iterator();
 		
 		ArrayList<String> colsNeeded = getColsNeeded(condition);
 		ArrayList<String> reps = new ArrayList<String>();
+		
+		int change = 0;
 		
 		while(iter.hasNext()) {
 			Map.Entry<String, String> m = (Map.Entry<String, String>) iter.next();
@@ -118,6 +122,7 @@ public class Table {
 					} 
 				}
 				if(condition == null || cp.evaluate((ArrayList<String>) condition.clone(), reps)) {
+					change++;
 					// update from xml
 					colList.item(i).setTextContent(m.getValue());
 					// update in the table itself
@@ -129,15 +134,17 @@ public class Table {
 				}
 			}
 		}
+		return change / colValues.size();
 	}
 	
 	@SuppressWarnings("unchecked")
-	public void deleteRecord(ArrayList<String> condition) {
+	public int deleteRecord(ArrayList<String> condition) {
 
 		ArrayList<String> colsNeeded = getColsNeeded(condition);
 		ArrayList<String> reps = new ArrayList<String>();
 
 		int count = this.columns.get(0).getElements().size();
+		int change = 0;
 
 		for (int i = 0; i < count; i++) {
 			reps.clear();
@@ -147,6 +154,7 @@ public class Table {
 				} 
 			}
 			if(condition == null || cp.evaluate((ArrayList<String>) condition.clone(), reps)) {
+				change++;
 				for (int j = 0; j < this.columns.size(); j++) {
 					// delete from xml
 					Node col = doc.getElementById(this.columns.get(j).getName());
@@ -160,6 +168,7 @@ public class Table {
 				count--;
 			}
 		}
+		return change;
 	}
 
 	@SuppressWarnings("unchecked")
