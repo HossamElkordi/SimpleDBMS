@@ -217,9 +217,9 @@ public class Parser {
         ArrayList<String> var=new ArrayList<>(),fields=new ArrayList<>();
 
         if(listcount(input,'(')==1){
-                int i=input.indexOf("(");String temp=new String();
+                int i=input.indexOf("(")+1;String temp=new String();
                 while(i<input.indexOf(")")){
-                    if(i==input.indexOf(")")-1){temp=temp+input.charAt(i);var.add(temp);}
+                    if(i==input.indexOf(")")-1){if(input.charAt(i)!=' ')temp=temp+input.charAt(i);if(!(temp.equals("")))var.add(temp);}
                     else if(input.charAt(i)!=' '&&input.charAt(i)!=','){
                         temp=temp+input.charAt(i);
                         if(input.charAt(i)=='\''){i++;
@@ -230,6 +230,7 @@ public class Parser {
                         }
                     }
                     else if(input.charAt(i)==','){
+                        if(!(temp.equals("")))
                         var.add(temp);
                         temp= "";
                     }
