@@ -52,13 +52,16 @@ public class MyDatabase implements Database {
 			map= (HashMap<String, Object>) parser.createdatabase(query);
 			if(map==null){throw new SQLException("syntax error");}
 			//at this point the query is correct and tha map contains the database's name
-			dbName= (String) map.get("DataBaseName");
-			File NewDatabase =new File(dbsPath+System.getProperty("file.separator")+dbName);
-			if(!NewDatabase.exists()||Drop)
-			{
-				NewDatabase.mkdirs();
+			if(createDatabase(map.get("DataBaseName").toString(), true).equals(dbsPath+System.getProperty("file.separator")+dbName)) {
 				return true;
 			}
+//			dbName= (String) map.get("DataBaseName");
+//			File NewDatabase =new File(dbsPath+System.getProperty("file.separator")+dbName);
+//			if(!NewDatabase.exists()||Drop)
+//			{
+//				NewDatabase.mkdirs();
+//				return true;
+//			}
 
 		}
 		else if(parser.typechecker(query)==1){//create table
@@ -183,11 +186,7 @@ public class MyDatabase implements Database {
 				cache.addToCache(table);
 			}
 		}
-
-
-
-
-		return 0;
+		return table.getColumns().get(0).getElements().size();
 	}
 		
 	@SuppressWarnings("unchecked")
