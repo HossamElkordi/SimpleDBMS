@@ -7,7 +7,7 @@ public class parsertest {
     static Parser a=Parser.getInstace();
     public static void main(String[] args) {
         Map<String,Object> z=new HashMap<>();
-        z=a.deleteQueryParser("delete from Customers where x<5 ;");
+        z=a.selectQueryParser("SELECT * FROM table_name;");
         System.out.println("dady");
     }
 }

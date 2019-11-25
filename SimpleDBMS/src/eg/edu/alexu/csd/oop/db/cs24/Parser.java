@@ -170,7 +170,7 @@ public class Parser {
     }
     public Map<String,Object> selectQueryParser(String input){ConditionParser cp=ConditionParser.getInstance();
         Pattern a=Pattern.compile(
-                "((select)|(SELECT))[\\s]+([*]|([^,\\s]+[\\s]*([,][\\s]*[^,\\s]+)*))[\\s]+((FROM)|(from))[\\s]+[\\S]+[\\s]+(((WHERE)|(where))[^;]+)?[;]"
+                "((select)|(SELECT))[\\s]+([*]|([^,\\s]+[\\s]*([,][\\s]*[^,\\s]+)*))[\\s]+((FROM)|(from))[\\s]+[\\S]+([\\s]+((WHERE)|(where))[^;]+)*[;]"
         );
         Matcher z=a.matcher(input.toLowerCase());
         if(!z.matches())return null;
@@ -190,7 +190,7 @@ public class Parser {
         }
         else{tablename=namegetter(input.substring(fromi,conditioni));}
         if(tablename==null)return null;
-        else{output.put("tablename",tablename);}
+        else{output.put("table",tablename);}
         if(conditioni==-1){output.put("condition",null);}
         else{if(cp.noregexparser(input.substring(conditioni+5).replace(";",""))==null){return null;}
             output.put("condition",cp.noregexparser(input.substring(conditioni+5).replace(";","")));}
