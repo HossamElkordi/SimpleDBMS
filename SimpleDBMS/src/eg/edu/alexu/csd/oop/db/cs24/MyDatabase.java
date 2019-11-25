@@ -1,9 +1,9 @@
 package eg.edu.alexu.csd.oop.db.cs24;
 
 import java.io.File;
-import java.io.IOException;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.Map.Entry;
 
 import javax.swing.JOptionPane;
 
@@ -58,14 +58,14 @@ public class MyDatabase implements Database {
 			map= (HashMap<String, Object>) parser.createtable(query);
 			if(map==null){throw new SQLException("syntax error");}
 			//at this point the query is correct and tha map contains the table's name and field/type (key,value pair)
-			Iterator it = map.entrySet().iterator();
+			Iterator<Entry<String, Object>> it = map.entrySet().iterator();
 			ArrayList<String>columns=new ArrayList<>();
 			tableName=(String)map.get("tableName");
 			map.remove("tableName");
 			while(it.hasNext())
 			{
-					Map.Entry pair = (Map.Entry)it.next();
-					columns.add( pair.getKey()+ ", "+pair.getKey());
+					Map.Entry<String, Object> pair = (Map.Entry<String, Object>)it.next();
+					columns.add( pair.getKey()+ ", "+pair.getValue());
 			}
 			File NewTable =new File(dbsPath+System.getProperty("file.separator")+dbName+System.getProperty("file.separator")+tableName);
 			if(!NewTable.exists()||Drop)
@@ -107,18 +107,14 @@ public class MyDatabase implements Database {
 		HashMap<String,Object> map=new HashMap<>();
 		map=(HashMap<String, Object>) parser.selectQueryParser(query);
 		if(map==null){throw new SQLException("syntax error");}
-		if((selectMapDecomposer(map)).size()==0){throw new SQLException("syntax error");}
+		ArrayList<String> names = selectMapDecomposer(map);
+		if(names.size()==0){throw new SQLException("syntax error");}
 		//at this point map contains 1)table==>(String)tablename  2)fields==>(Arraylist<Strings> contains the field to be shown or * if all the fields are to be show
 		//3)condition==>Arraylist<String>condition that contains the conditions or null if there isn't any
 		//(you also need to check if a database with this name exists)
-		File Table =new File(dbsPath+System.getProperty("file.separator")+dbName+System.getProperty("file.separator")+map.get("table"));
-		if(Table.exists())
+		if(table != null)
 		{
-			table=xmlParser.LoadTable(dbsPath+System.getProperty("file.separator")+dbName+System.getProperty("file.separator")+map.get("table"));
-			ArrayList<?>ColumnNames= (ArrayList<String>) map.get("fields");
-			if(ColumnNames.contains("*"))
-				ColumnNames=table.getColumns();
-			return table.SelectRecord((ArrayList<String>) map.get("condition"),(ArrayList<String>)ColumnNames);
+			return table.SelectRecord(this.condition,names);
 		}
 		throw new SQLException("Table doesn't exist");
 	}
@@ -133,14 +129,9 @@ public class MyDatabase implements Database {
 			if(colVals.size()==0){throw new SQLException("syntax error");}
 			//at this point you know that the update query has no errors ask hossam to know what is stored where
 			//(you also need to check if a database with this name exists)
-			File Table =new File(dbsPath+System.getProperty("file.separator")+dbName+System.getProperty("file.separator")+map.get("table"));
-			if(Table.exists())
+			if((table != null) && (colVals.size() != 0))
 			{
-				table=xmlParser.LoadTable(dbsPath+System.getProperty("file.separator")+dbName+System.getProperty("file.separator")+map.get("table"));
-				ArrayList<?>ColumnNames= (ArrayList<String>) map.get("fields");
-				if(ColumnNames.contains("*"))
-					ColumnNames=table.getColumns();
-				table.updateRecord(ColumnNames,(ArrayList<String>) map.get("condition"));
+				table.updateRecord(this.colVals, this.condition);
 			}
 		}
 		else if(parser.typechecker(query)==6){
@@ -150,6 +141,10 @@ public class MyDatabase implements Database {
 			if(colVals.size()==0){throw new SQLException("syntax error");}
 			//at this point you know that the delete query has no errors ask hossam to know what is stored where
 			//(you also need to check if a database with this name exists)
+			if((table != null) && (colVals.size() == 0))
+			{
+				table.deleteRecord(this.condition);
+			}
 		}
 		else if (parser.typechecker(query)==7){
 			map=(HashMap<String, Object>) parser.insertQueryParser(query);
@@ -158,6 +153,10 @@ public class MyDatabase implements Database {
 			if(colVals.size()==0){throw new SQLException("syntax error");}
 			//at this point you know that the insert query has no errors ask hossam to know what is stored where
 			//(you also need to check if a database with this name exists)
+			if((table != null) && (colVals.size() != 0))
+			{
+				table.addRecord(this.colVals);
+			}
 		}
 
 
@@ -230,6 +229,8 @@ public class MyDatabase implements Database {
 	@SuppressWarnings("unchecked")
 	private ArrayList<String> selectMapDecomposer(HashMap<String, Object> map) {
 		getBasicFromMap(map);
+		map.remove("table");
+		map.remove("condition");
 		ArrayList<String> colNames = (ArrayList<String>)map.get("fields");
 		if((colNames.size() == 1) && (colNames.get(0).equals("*"))) {
 			colNames.clear();
@@ -261,8 +262,13 @@ public class MyDatabase implements Database {
 			table = cache.retrieveFromCache(map.get("table").toString());
 			if(table == null) {
 				this.tableName = map.get("condition").toString();
-				cache.addToCache(xmlParser.LoadTable(dbsPath + System.getProperty("file.separator") + dbName + System.getProperty("file.separator") + tableName + ".xml"));
-				table = cache.retrieveFromCache(map.get("table").toString());
+				Table t = xmlParser.LoadTable(dbsPath + System.getProperty("file.separator") + dbName + System.getProperty("file.separator") + tableName + ".xml");
+				if(t != null) {
+					cache.addToCache(t);
+					table = cache.retrieveFromCache(map.get("table").toString());
+				}else {
+					table = t;
+				}
 			}
 		}
 	}
