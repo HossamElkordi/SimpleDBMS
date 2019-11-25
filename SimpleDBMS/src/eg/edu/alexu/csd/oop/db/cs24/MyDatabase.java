@@ -69,10 +69,10 @@ public class MyDatabase implements Database {
 			map= (HashMap<String, Object>) parser.createtable(query);
 			if(map==null){throw new SQLException("syntax error");}
 			//at this point the query is correct and tha map contains the table's name and field/type (key,value pair)
-			Iterator<Entry<String, Object>> it = map.entrySet().iterator();
 			ArrayList<String>columns=new ArrayList<>();
 			tableName=(String)map.get("tableName");
 			map.remove("tableName");
+            Iterator<Entry<String, Object>> it = map.entrySet().iterator();
 			while(it.hasNext())
 			{
 					Map.Entry<String, Object> pair = (Map.Entry<String, Object>)it.next();

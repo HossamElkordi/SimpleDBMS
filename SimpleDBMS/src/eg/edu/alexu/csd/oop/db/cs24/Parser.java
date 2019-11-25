@@ -344,11 +344,11 @@ public class Parser {
     }
     public Map<String,Object> createtable(String input){
         input=input.trim();
-        if(input.charAt(input.length()-1)!=';'){
+        /*if(input.charAt(input.length()-1)!=';'){
             return null;
         }else{
             input=input.substring(0,input.length()-1);
-        }
+        }*/
         int i=input.indexOf("(");
         String check=input.substring(0,i-1);
         check=check.trim();
@@ -380,7 +380,7 @@ public class Parser {
             Matcher matcher1=pattern1.matcher(arrOfStr[j].toLowerCase());
             if(!matcher.matches())
                 return null;
-            String Name=arrOfStr[j].substring(0,Math.min(arrOfStr[j].indexOf(" "),arrOfStr[j].indexOf("\t"))-1);
+            String Name=arrOfStr[j].substring(0,arrOfStr[j].indexOf(" ")-1);
             if(arrOfStr[j].toLowerCase().contains("int")){
                 output.put(Name,"int");
             }else if(arrOfStr[j].toLowerCase().contains("varchar")){
