@@ -38,7 +38,11 @@ public class MyDatabase implements Database {
 	
 	public String createDatabase(String databaseName, boolean dropIfExists) {
 		Drop=dropIfExists;
-		return null;
+		dbName=databaseName;
+		File NewDatabase =new File(dbsPath+System.getProperty("file.separator")+dbName);
+		if(!NewDatabase.exists()||Drop)
+			NewDatabase.mkdirs();
+		return dbsPath+System.getProperty("file.separator")+dbName;
 	}
 	
 	public boolean executeStructureQuery(String query) throws SQLException {//the one that deals with create and drop
@@ -55,7 +59,7 @@ public class MyDatabase implements Database {
 				NewDatabase.mkdirs();
 				return true;
 			}
-			
+
 		}
 		else if(parser.typechecker(query)==1){//create table
 			map= (HashMap<String, Object>) parser.createtable(query);
