@@ -139,8 +139,7 @@ public class Parser {
 
 	public Map<String,Object> updateQueryParser(String input){
 	    Pattern a=Pattern.compile(
-	            "((update)|(UPDATE))[\\s]+[\\S]+[\\s]+((set)|(SET))[\\s]+[\\S]+[\\s]*[=][\\s]*(['][^']*[']|[^'])" +
-                        "([\\s]*([,][\\s]+[\\S]+[\\s]*[=][\\s]*(['][^']*[']|[^']))*)[\\s]*(((WHERE)|(where))[^;]+)?"
+	            "((update)|(UPDATE))[\\s]+[\\S]+[\\s]+((set)|(SET))[\\s]+[^\\s=]+[\\s]*[=][\\s]*(['][^']*[']|[^',]+)([\\s]*[,][\\s]*[^\\s=]+[\\s]*[=][\\s]*]*(['][^']*[']|[^',]+))+(((WHERE)|(where))[^;]+)?"
         );
 	    Matcher z=a.matcher(input.toLowerCase());
 	    if(!z.matches())return null;
