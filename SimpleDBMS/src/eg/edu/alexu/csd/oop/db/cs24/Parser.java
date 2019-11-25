@@ -210,9 +210,9 @@ public class Parser {
         Matcher z=a.matcher(input.toLowerCase());
         if(!z.matches())return null;
         else{input=input.substring(0,input.length()-1);}
-        input.replace(")"," ) ");
-        input.replace("("," ( ");
-        input.replace(","," , ");
+        input=input.replace(")"," ) ");
+        input=input.replace("("," ( ");
+        input=input.replace(","," , ");
         Map<String,Object> output=new HashMap<>();
         ArrayList<String> var=new ArrayList<>(),fields=new ArrayList<>();
 
