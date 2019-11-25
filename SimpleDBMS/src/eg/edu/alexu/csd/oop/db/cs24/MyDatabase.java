@@ -295,7 +295,6 @@ public class MyDatabase implements Database {
 			cache.addToCache(table);
 			table = cache.retrieveFromCache(map.get("table").toString());
 			if(table == null) {
-				// corrected
 				this.tableName = map.get("table").toString();
 				Table t = xmlParser.LoadTable(dbsPath + System.getProperty("file.separator") + dbName + System.getProperty("file.separator") + tableName + ".xml");
 				if(t != null) {
