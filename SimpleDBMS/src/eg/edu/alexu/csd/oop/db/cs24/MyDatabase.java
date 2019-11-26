@@ -200,13 +200,8 @@ public class MyDatabase implements Database {
 	}
 		
 	@SuppressWarnings("unchecked")
-	private void addMapDecomposer(HashMap<String, Object> map) throws SQLException {
-		try{
-			getBasicFromMap(map);
-		}catch (SQLException e)
-		{
-			throw new SQLException("No file found fot this table");
-		}
+	private void addMapDecomposer(HashMap<String, Object> map) {
+		getBasicFromMap(map);
 		map.remove("table");
 		map.remove("condition");
 		
@@ -242,17 +237,14 @@ public class MyDatabase implements Database {
 	
 	@SuppressWarnings("unchecked")
 	private void updateMapDecomposer(HashMap<String, Object> map) throws SQLException {
-		try{
-			getBasicFromMap(map);
-		}catch (SQLException e)
-		{
-			throw new SQLException("No file found fot this table");
-		}
+		getBasicFromMap(map);
 		map.remove("table");
 		map.remove("condition");
 		
 		Set<?> set = map.entrySet();
 		Iterator<?> iter = set.iterator();
+		if(table==null)
+			throw new SQLException("Null table");
 		while(iter.hasNext()) {
 			Map.Entry<String, String> m = (Map.Entry<String, String>) iter.next();
 			if(!columnMatchValue(this.table.getColumnByName(m.getKey()), m.getValue())) {
@@ -263,26 +255,16 @@ public class MyDatabase implements Database {
 		}
 	}
 	
-	private void deleteMapDecomposer(HashMap<String, Object> map) throws SQLException {
-		try{
-			getTableFromMap(map);
-		}catch (SQLException E)
-		{
-			throw new SQLException("No file found fot this table");
-		}
+	private void deleteMapDecomposer(HashMap<String, Object> map) {
+		getTableFromMap(map);
 		map.remove("table");
 		map.remove("condition");
 		this.colVals.clear();
 	}
 	
 	@SuppressWarnings("unchecked")
-	private ArrayList<String> selectMapDecomposer(HashMap<String, Object> map) throws SQLException {
-		try{
-			getBasicFromMap(map);
-		}catch (SQLException E)
-		{
-			throw new SQLException("No file found fot this table");
-		}
+	private ArrayList<String> selectMapDecomposer(HashMap<String, Object> map) {
+		getBasicFromMap(map);
 		map.remove("table");
 		map.remove("condition");
 		ArrayList<String> colNames = (ArrayList<String>)map.get("fields");
@@ -305,17 +287,12 @@ public class MyDatabase implements Database {
 	}
 
 	@SuppressWarnings("unchecked")
-	private void getBasicFromMap(HashMap<String, Object> map) throws SQLException {
-		try {
-			getTableFromMap(map);
-		}catch (SQLException E)
-		{
-			throw new SQLException("No file found fot this table");
-		}
+	private void getBasicFromMap(HashMap<String, Object> map) {
+		getTableFromMap(map);
 		this.condition = (ArrayList<String>)map.get("condition");
 	}
 
-	private void getTableFromMap(HashMap<String, Object> map) throws SQLException {
+	private void getTableFromMap(HashMap<String, Object> map) {
 		if(!map.get("table").toString().equals(this.table.getName())) {
 			cache.addToCache(table);
 			table = cache.retrieveFromCache(map.get("table").toString());
@@ -326,8 +303,7 @@ public class MyDatabase implements Database {
 					cache.addToCache(t);
 					table = cache.retrieveFromCache(map.get("table").toString());
 				}else {
-					/*table = t;*/
-					throw new SQLException("No file found fot this table");
+					table = t;
 				}
 			}
 		}
