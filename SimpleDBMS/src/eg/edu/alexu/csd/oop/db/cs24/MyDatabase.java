@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import java.util.*;
 import java.util.Map.Entry;
 
-import javax.swing.JOptionPane;
+
 
 public class MyDatabase implements Database {
 	
@@ -42,8 +42,17 @@ public class MyDatabase implements Database {
 		File NewDatabase =new File(dbsPath+System.getProperty("file.separator")+dbName);
 		if(!NewDatabase.exists()||Drop)
 		{
-			if(NewDatabase.exists())
+			if(NewDatabase.exists()&&Drop)
+			{
+				File[] listOfFiles = NewDatabase.listFiles();
+				for(File f:listOfFiles)
+				{
+					int index=f.getName().indexOf(".");
+					if(index!=-1)
+						cache.retrieveFromCache(f.getName().substring(0,index));
+				}
 				delete(NewDatabase);
+			}
 			NewDatabase.mkdirs();
 		}
 		return dbsPath+System.getProperty("file.separator")+dbName;
