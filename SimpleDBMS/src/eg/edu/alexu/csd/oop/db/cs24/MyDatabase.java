@@ -168,7 +168,7 @@ public class MyDatabase implements Database {
 			map=(HashMap<String, Object>) parser.deleteQueryParser(query.toLowerCase());
 			if(map==null){throw new SQLException("syntax error");}
 			deleteMapDecomposer(map);
-			if(colVals.size()==0){throw new SQLException("syntax error");}
+			if(colVals.size()!=0){throw new SQLException("syntax error");}
 			//at this point you know that the delete query has no errors ask hossam to know what is stored where
 			//(you also need to check if a database with this name exists)
 			if((table != null) && (colVals.size() == 0))
@@ -248,7 +248,7 @@ public class MyDatabase implements Database {
 	}
 	
 	private void deleteMapDecomposer(HashMap<String, Object> map) {
-		getTableFromMap(map);
+		getBasicFromMap(map);
 		map.remove("table");
 		map.remove("condition");
 		this.colVals.clear();

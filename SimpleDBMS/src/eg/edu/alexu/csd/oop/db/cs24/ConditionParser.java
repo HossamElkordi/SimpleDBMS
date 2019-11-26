@@ -121,7 +121,7 @@ public class ConditionParser {
 	}
 	
 	private boolean singleCondEvaluation(List<String> condition) {
-		String STRING_REGEX = "[A-Z]+";
+		String STRING_REGEX = "[\'][^s,<>]+[\']";
 		String INT_REGEX = "[0-9]+";
 		if(Pattern.matches(STRING_REGEX, condition.get(0)) && Pattern.matches(STRING_REGEX, condition.get(2))) {
 			if(!condition.get(0).equals(condition.get(2))) {
