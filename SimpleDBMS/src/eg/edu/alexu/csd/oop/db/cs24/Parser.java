@@ -245,7 +245,7 @@ public class Parser {
         else if(listcount(input,'(')==2){String temp=new String();
             int i=input.lastIndexOf('(')+1;
             while(i<input.lastIndexOf(")")){
-                if(i==input.lastIndexOf(")")-1){if(input.charAt(i)!=' ')temp=temp+input.charAt(i);var.add(temp);}
+                if(i==input.lastIndexOf(")")-1){if(input.charAt(i)!=' ')temp=temp+input.charAt(i);if(!(temp.equals("")))var.add(temp);}
                 else if(input.charAt(i)!=' '&&input.charAt(i)!=','){
                     temp=temp+input.charAt(i);
                     if(input.charAt(i)=='\''){i++;
@@ -265,7 +265,7 @@ public class Parser {
             i=input.indexOf("(")+1;
             temp="";
             while(i<input.indexOf(")")){
-                if(i==input.indexOf(")")-1){if(input.charAt(i)!=' ')temp=temp+input.charAt(i);fields.add(temp);}
+                if(i==input.indexOf(")")-1){if(input.charAt(i)!=' ')temp=temp+input.charAt(i);if(!(temp.equals("")))fields.add(temp);}
                 else if(input.charAt(i)!=' '&&input.charAt(i)!=','){
                     temp=temp+input.charAt(i);
 
