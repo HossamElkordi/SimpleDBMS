@@ -7,7 +7,7 @@ public class parsertest {
     static Parser a=Parser.getInstace();
     public static void main(String[] args) {
         Map<String,Object> z=new HashMap<>();
-        z=a.selectQueryParser("SELECT column_name1 FROM table_name13 WHERE coluMN_NAME2 < 5");
+        z=a.updateQueryParser("UPDATE table_name8 SET column_name1='11111111', COLUMN_NAME2=22222222, column_name3='333333333' WHERE coLUmn_NAME3='VALUE3'");
         System.out.println("dady");
     }
 }
