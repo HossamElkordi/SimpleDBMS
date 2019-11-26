@@ -121,8 +121,12 @@ public class MyDatabase implements Database {
 			File DTD =new File(dbsPath+System.getProperty("file.separator")+dbName+System.getProperty("file.separator")+map.get("tableName")+".dtd");
 			if(Table.exists()&&DTD.exists())
 			{
-				delete(Table);
-				delete(DTD);
+			    Table.delete();
+			    DTD.delete();
+			    if(map.get("tableName").equals(tableName))
+			    	table=null;
+				//delete(Table);
+				//delete(DTD);
 				cache.retrieveFromCache((String) map.get("tableName"));
 				return true;
 			}

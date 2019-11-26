@@ -61,9 +61,10 @@ public class XML {
                 tr.setOutputProperty(OutputKeys.INDENT, "yes");
                 tr.setOutputProperty(
                         OutputKeys.DOCTYPE_SYSTEM, path.substring(path.lastIndexOf('\\')+1,path.indexOf(".xml"))+".dtd");
-                tr.transform(new DOMSource(dom),
-                        new StreamResult(new FileOutputStream(path)));
+                StreamResult str=new StreamResult(new FileOutputStream(path));
+                tr.transform(new DOMSource(dom),str);
                 CreateDTD(table,path);
+                str.getOutputStream().close();
             } catch (TransformerException | IOException te) {
                 System.out.println(te.getMessage());
             }

@@ -402,8 +402,7 @@ public class Parser {
         Matcher matcher=pattern.matcher(input);
         if(!matcher.matches())
             return null;
-        input=input.substring(0,input.length()-1);
-        input.trim();
+        input=input.trim();
         input=input.substring(4);
         input=input.trim();
         input=input.substring(5);

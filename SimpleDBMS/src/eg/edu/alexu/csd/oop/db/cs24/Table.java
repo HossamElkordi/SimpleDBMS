@@ -226,8 +226,9 @@ public class Table {
 		    Transformer tr = TransformerFactory.newInstance().newTransformer();
 		    tr.setOutputProperty(
 		            OutputKeys.DOCTYPE_SYSTEM, path.substring(path.lastIndexOf('\\')+1,path.indexOf(".xml"))+".dtd");
-		    tr.transform(new DOMSource(doc),
-		            new StreamResult(new FileOutputStream(path)));
+            StreamResult str=new StreamResult(new FileOutputStream(path));
+            tr.transform(new DOMSource(doc),str);
+            str.getOutputStream().close();
 		} catch (TransformerException | IOException te) {
 		    System.out.println(te.getMessage());
 		}
