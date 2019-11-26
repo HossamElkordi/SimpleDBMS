@@ -266,7 +266,11 @@ public class MyDatabase implements Database {
 				colNames.add(this.table.getColumns().get(i).getName());
 			}
 		}else if((colNames.size() == 1) && (!colNames.get(0).equals("*"))) {
+			Column<?> col = this.table.getColumnByName(colNames.get(0).toString());
 			colNames.clear();
+			if(col != null) {
+				colNames.add(col.getName());
+			}
 		}else {
 			for (int i = 0; i < colNames.size(); i++) {
 				if(this.table.getColumnByName(colNames.get(i)) == null) {
