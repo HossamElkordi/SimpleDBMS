@@ -200,8 +200,13 @@ public class MyDatabase implements Database {
 	}
 		
 	@SuppressWarnings("unchecked")
-	private void addMapDecomposer(HashMap<String, Object> map) {
-		getBasicFromMap(map);
+	private void addMapDecomposer(HashMap<String, Object> map) throws SQLException {
+		try{
+			getBasicFromMap(map);
+		}catch (SQLException e)
+		{
+			throw new SQLException("No file found fot this table");
+		}
 		map.remove("table");
 		map.remove("condition");
 		
@@ -236,8 +241,13 @@ public class MyDatabase implements Database {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private void updateMapDecomposer(HashMap<String, Object> map) {
-		getBasicFromMap(map);
+	private void updateMapDecomposer(HashMap<String, Object> map) throws SQLException {
+		try{
+			getBasicFromMap(map);
+		}catch (SQLException e)
+		{
+			throw new SQLException("No file found fot this table");
+		}
 		map.remove("table");
 		map.remove("condition");
 		
@@ -253,16 +263,26 @@ public class MyDatabase implements Database {
 		}
 	}
 	
-	private void deleteMapDecomposer(HashMap<String, Object> map) {
-		getTableFromMap(map);
+	private void deleteMapDecomposer(HashMap<String, Object> map) throws SQLException {
+		try{
+			getTableFromMap(map);
+		}catch (SQLException E)
+		{
+			throw new SQLException("No file found fot this table");
+		}
 		map.remove("table");
 		map.remove("condition");
 		this.colVals.clear();
 	}
 	
 	@SuppressWarnings("unchecked")
-	private ArrayList<String> selectMapDecomposer(HashMap<String, Object> map) {
-		getBasicFromMap(map);
+	private ArrayList<String> selectMapDecomposer(HashMap<String, Object> map) throws SQLException {
+		try{
+			getBasicFromMap(map);
+		}catch (SQLException E)
+		{
+			throw new SQLException("No file found fot this table");
+		}
 		map.remove("table");
 		map.remove("condition");
 		ArrayList<String> colNames = (ArrayList<String>)map.get("fields");
@@ -285,12 +305,17 @@ public class MyDatabase implements Database {
 	}
 
 	@SuppressWarnings("unchecked")
-	private void getBasicFromMap(HashMap<String, Object> map) {
-		getTableFromMap(map);
+	private void getBasicFromMap(HashMap<String, Object> map) throws SQLException {
+		try {
+			getTableFromMap(map);
+		}catch (SQLException E)
+		{
+			throw new SQLException("No file found fot this table");
+		}
 		this.condition = (ArrayList<String>)map.get("condition");
 	}
 
-	private void getTableFromMap(HashMap<String, Object> map) {
+	private void getTableFromMap(HashMap<String, Object> map) throws SQLException {
 		if(!map.get("table").toString().equals(this.table.getName())) {
 			cache.addToCache(table);
 			table = cache.retrieveFromCache(map.get("table").toString());
@@ -301,12 +326,13 @@ public class MyDatabase implements Database {
 					cache.addToCache(t);
 					table = cache.retrieveFromCache(map.get("table").toString());
 				}else {
-					table = t;
+					/*table = t;*/
+					throw new SQLException("No file found fot this table");
 				}
 			}
 		}
 	}
-	
+
 	private boolean columnMatchValue(Column<?> col, String val) {
 		// corrected
 		if(col == null) {
