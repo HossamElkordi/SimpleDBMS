@@ -200,21 +200,17 @@ public class Table {
 				++index;
 			}
 		}
-		HashSet<Integer> Indices=new HashSet<>();
+		ArrayList<Integer> Indices=new ArrayList<Integer>();
 		for (String columnName : ColumnNames)
 			Indices.add(this.columns.indexOf(getColumnByName(columnName)));
-		for(int i=0;i<answer.size();++i)
-		{
-			if(!Indices.contains(i))
-				answer.remove(i);
-		}
-		if(answer.size()!=0)
-		{
-			Object[][]AnswerArray=new Object[answer.size()][answer.get(0).size()];
-			for (int i = 0; i < answer.size(); ++i) {
-				ArrayList<Object> row = answer.get(i);
-				AnswerArray[i] = row.toArray(new Object[row.size()]);
-			}
+		
+		if (answer.size() != 0) {
+			Object[][] AnswerArray = new Object[answer.size()][Indices.size()];
+			for (int i = 0; i < Indices.size(); i++) {
+				for (int j = 0; j < answer.size(); j++) {
+					AnswerArray[j][i] = answer.get(j).get(Indices.get(i));
+				}
+			} 
 			return AnswerArray;
 		}
 		return null;
