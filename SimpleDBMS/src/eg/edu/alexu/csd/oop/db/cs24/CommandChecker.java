@@ -1,15 +1,14 @@
 package eg.edu.alexu.csd.oop.db.cs24;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class CommandChecker {
 	
 	private MyDatabase db;
 	
-	private Object[][] columnsNames;
+	private static Object[][] columnsNames;
 	private Object[][] dataSet;
-	
-	private int rowNum = 0;
 	
 	public CommandChecker() {
 		db = new MyDatabase();		
@@ -21,8 +20,7 @@ public class CommandChecker {
 			
 			if(db.executeStructureQuery(command)) {
 				// columnsNames should have been set from the parser
-				rowNum = 0;
-				dataSet = new Object[rowNum][0];
+				dataSet = new Object[0][0];
 			}
 			
 		}else if(command.contains("select")) {
@@ -31,9 +29,8 @@ public class CommandChecker {
 			
 		}else if(command.contains("insert") || command.contains("update") || command.contains("delete")) {
 			
-			rowNum = db.executeUpdateQuery(command);
-				
-			
+			db.executeUpdateQuery(command);
+
 		}
 	}
 
@@ -45,8 +42,11 @@ public class CommandChecker {
 		return columnsNames;
 	}
 	
-	public void setColumnsNames(Object[][] columnsNames) {
-		this.columnsNames = columnsNames;
+	public static void setColumnsNames(ArrayList<String> columnNames) {
+		columnsNames = new Object[1][columnNames.size()];
+		for (int i = 0; i < columnsNames.length; i++) {
+			columnsNames[0][i] = columnNames.get(i);
+		}
 	}
 	
 }

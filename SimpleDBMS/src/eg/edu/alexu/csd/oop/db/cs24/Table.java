@@ -104,7 +104,16 @@ public class Table {
 		Iterator<?> iter = set.iterator();
 		
 		ArrayList<String> colsNeeded = getColsNeeded(condition);
-		ArrayList<String> reps = new ArrayList<String>();
+		ArrayList<ArrayList<String>> reps = new ArrayList<ArrayList<String>>();
+		if(condition != null) {
+			for (int i = 0; i < this.columns.get(0).getElements().size(); i++) {
+				ArrayList<String> rep = new ArrayList<String>();
+				for (int j = 0; j < colsNeeded.size(); j++) {
+					rep.add((getColumnByName(colsNeeded.get(j)).getElements().get(i)).toString());
+				}
+				reps.add(rep);
+			}
+		}
 		
 		int change = 0;
 		
@@ -115,13 +124,7 @@ public class Table {
 			Column<?> col = getColumnByName(m.getKey());
 			ArrayList<?> elements = col.getElements();
 			for (int i = 0; i < colList.getLength(); i++) {
-				reps.clear();
-				if (condition != null) {
-					for (int j = 0; j < colsNeeded.size(); j++) {
-						reps.add((getColumnByName(colsNeeded.get(j)).getElements().get(i)).toString());
-					} 
-				}
-				if(condition == null || cp.evaluate((ArrayList<String>) condition.clone(), reps)) {
+				if(condition == null || cp.evaluate((ArrayList<String>) condition.clone(), reps.get(i))) {
 					change++;
 					// update from xml
 					colList.item(i).setTextContent(m.getValue());
@@ -134,7 +137,7 @@ public class Table {
 				}
 			}
 		}
-		return (int) Math.ceil((double)change / (double)colValues.size());
+		return change / colValues.size();
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -211,6 +214,7 @@ public class Table {
 					AnswerArray[j][i] = answer.get(j).get(Indices.get(i));
 				}
 			} 
+			CommandChecker.setColumnsNames(ColumnNames);
 			return AnswerArray;
 		}
 		return null;

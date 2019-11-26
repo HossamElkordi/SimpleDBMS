@@ -197,7 +197,6 @@ public class Parser {
     }
 
    public Map<String,Object> insertQueryParser(String input){
-	    System.out.println(input.toLowerCase());
         input=input.replace(")"," ) ");
         input= input.replace("("," ( ");
         input=input.replace(","," , ");
