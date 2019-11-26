@@ -172,7 +172,7 @@ public class Parser {
         );
         Matcher z=a.matcher(input);
         if(!z.matches())return null;
-       input=input.substring(0,input.length()-1);
+       //input=input.toLowerCase();
         Map<String,Object> output=new HashMap<>();
         int selecti,fromi,conditioni;
         selecti=input.indexOf("select");
