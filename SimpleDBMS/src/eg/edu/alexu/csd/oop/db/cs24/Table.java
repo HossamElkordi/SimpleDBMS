@@ -134,7 +134,7 @@ public class Table {
 				}
 			}
 		}
-		return change / colValues.size();
+		return (int) Math.ceil((double)change / (double)colValues.size());
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -192,7 +192,7 @@ public class Table {
 					Node col = doc.getElementById(this.columns.get(j).getName());
 					NodeList colList = col.getChildNodes();
 					Element e = (Element) colList.item(i);
-					if(e.getParentNode().getAttributes().item(0).toString().equals("int"))
+					if(e.getParentNode().getAttributes().item(1).toString().contains("int"))
 						answer.get(index).add(Integer.parseInt(e.getTextContent()));
 					else
 						answer.get(index).add(e.getTextContent());
