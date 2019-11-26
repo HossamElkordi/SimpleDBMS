@@ -44,18 +44,18 @@ public class Parser {
 
 		}
 		if(a.size()<2){return -1;}
-		else if(a.get(0).toLowerCase().equals("create")){
-			if(a.get(1).toLowerCase().equals("database")){return 0;}
-			else if(a.get(1).toLowerCase().equals("table")){return 1;}
+		else if(a.get(0).equals("create")){
+			if(a.get(1).equals("database")){return 0;}
+			else if(a.get(1).equals("table")){return 1;}
 		}
-		else if(a.get(0).toLowerCase().equals("drop")){
-			if(a.get(1).toLowerCase().equals("database")){return 2;}
-			else if(a.get(1).toLowerCase().equals("table")){return 3;}
+		else if(a.get(0).equals("drop")){
+			if(a.get(1).equals("database")){return 2;}
+			else if(a.get(1).equals("table")){return 3;}
 		}
-		else if(a.get(0).toLowerCase().equals("select")){return 4;}
-		else if(a.get(0).toLowerCase().equals("update")){return 5;}
-		else if(a.get(0).toLowerCase().equals("delete")){return 6;}
-		else if(a.get(0).toLowerCase().equals("insert")){return 7;}
+		else if(a.get(0).equals("select")){return 4;}
+		else if(a.get(0).equals("update")){return 5;}
+		else if(a.get(0).equals("delete")){return 6;}
+		else if(a.get(0).equals("insert")){return 7;}
 
 		return -1;
 
@@ -141,15 +141,15 @@ public class Parser {
 	    Pattern a=Pattern.compile(
 	            "((update)|(UPDATE))[\\s]+[\\S]+[\\s]+((set)|(SET))[\\s]+[^\\s=]+[\\s]*[=][\\s]*(['][^']*[']|[^',]+)([\\s]*[,][\\s]*[^\\s=]+[\\s]*[=][\\s]*]*(['][^']*[']|[^',]+))+(((WHERE)|(where))[^;]+)?"
         );
-	    Matcher z=a.matcher(input.toLowerCase());
+	    Matcher z=a.matcher(input);
 	    if(!z.matches())return null;
 	    ConditionParser cp=ConditionParser.getInstance();
         Map<String,Object> output=new HashMap<>();
         int i=0,conditioni,seti,updatei;
-        updatei=input.toLowerCase().indexOf("update");
-        if(input.toLowerCase().contains("where")){conditioni=input.toLowerCase().indexOf("where");}
+        updatei=input.indexOf("update");
+        if(input.contains("where")){conditioni=input.indexOf("where");}
         else conditioni=-1;
-         seti=input.toLowerCase().indexOf("set");
+         seti=input.indexOf("set");
         output.put("table",namegetter(input.substring(updatei,seti)));
         ArrayList<String> fieldarray=new ArrayList<>();
         if(conditioni!=-1){fieldarray=fieldArraygetter(input.substring(seti,conditioni));}
@@ -170,16 +170,16 @@ public class Parser {
         Pattern a=Pattern.compile(
                 "((select)|(SELECT))[\\s]+([*]|([^,\\s]+[\\s]*([,][\\s]*[^,\\s]+)*))[\\s]+((FROM)|(from))[\\s]+[\\S]+([\\s]+((WHERE)|(where))[^;]+)*"
         );
-        Matcher z=a.matcher(input.toLowerCase());
+        Matcher z=a.matcher(input);
         if(!z.matches())return null;
        input=input.substring(0,input.length()-1);
         Map<String,Object> output=new HashMap<>();
         int selecti,fromi,conditioni;
-        selecti=input.toLowerCase().indexOf("select");
+        selecti=input.indexOf("select");
 
-        fromi=input.toLowerCase().indexOf("from");
-        if(!input.toLowerCase().contains("where")){conditioni=-1;}
-        else{conditioni=input.toLowerCase().indexOf("where");}
+        fromi=input.indexOf("from");
+        if(!input.contains("where")){conditioni=-1;}
+        else{conditioni=input.indexOf("where");}
         if(selectquery(input.substring(selecti,fromi))==null)return null;
         output.put("fields",selectquery(input.substring(selecti,fromi)));
         String tablename;
@@ -205,7 +205,7 @@ public class Parser {
                         "(([^,\\s]+)|(['][^']+['])))*[\\s]*[\\)][\\s]*)|([\\s]*(values)[\\s]*+[\\s]*[\\(][\\s]*(([^\\s,\\(\\)]+)" +
                         "|(['][^']+[']))([\\s]*[,][\\s]*(([^,\\s\\(\\)]+)|(['][^']+['])))*[\\s]*[\\)][\\s]*))"
         );
-        Matcher z=a.matcher(input.toLowerCase());
+        Matcher z=a.matcher(input);
         if(!z.matches())return null;
         else{input=input.substring(0,input.length()-1);}
         input=input.replace(")"," ) ");
@@ -281,7 +281,7 @@ public class Parser {
                 }
             }
         }
-       int i= input.toLowerCase().indexOf("into")+4;
+       int i= input.indexOf("into")+4;
         String temp="";
         while(input.charAt(i)==' '){i++;}
         while(!(input.charAt(i)==' ')){temp=temp+input.charAt(i);i++;}
@@ -295,15 +295,15 @@ public class Parser {
    public Map<String,Object> deleteQueryParser(String input){ConditionParser cp=ConditionParser.getInstance();
        Pattern a=Pattern.compile("(delete)[\\s]+(from)[\\s]+[^\\s]+[\\s]*([\\s]+(where)[\\s]+[^;]+)?[\\s]*");
 	   Map<String ,Object> output=new HashMap<>();
-       Matcher z=a.matcher(input.toLowerCase());
+       Matcher z=a.matcher(input);
        if(!z.matches())return null;
        input.replace(";","");
        int wherei,fromi;
-       if(!(input.toLowerCase().contains("where"))){output.put("condition",null);wherei=-1;}
-       else{wherei=input.toLowerCase().indexOf("where");
+       if(!(input.contains("where"))){output.put("condition",null);wherei=-1;}
+       else{wherei=input.indexOf("where");
            output.put("condition",cp.noregexparser(input.substring(wherei+5).replace(";","")));
        }
-       fromi=input.toLowerCase().indexOf("from");
+       fromi=input.indexOf("from");
        if(wherei==-1){
            output.put("table",input.substring(fromi+4).replace(" ","").replace(";",""));
        }
@@ -315,7 +315,7 @@ public class Parser {
         input=input.trim();
         Map<String,Object> output=new HashMap<>();
         Pattern pattern = Pattern.compile("(create)[\\s]+(database)[\\s]+[\\w]+[\\s]*");
-        Matcher matcher=pattern.matcher(input.toLowerCase());
+        Matcher matcher=pattern.matcher(input);
         if(!matcher.matches())
             return null;
         input=input.substring(0,input.length()-1);
@@ -331,7 +331,7 @@ public class Parser {
         input=input.trim();
         Map<String,Object> output=new HashMap<>();
         Pattern pattern = Pattern.compile("(drop)[\\s]+(database)[\\s]+[\\w]+[\\s]*");
-        Matcher matcher=pattern.matcher(input.toLowerCase());
+        Matcher matcher=pattern.matcher(input);
         if(!matcher.matches())
             return null;
         input=input.substring(0,input.length()-1);
@@ -357,7 +357,7 @@ public class Parser {
         check=check.trim();
         Map<String,Object> output=new HashMap<>();
         Pattern pattern = Pattern.compile("(create)[\\s]+(table)[\\s]+[\\w]+");
-        Matcher matcher=pattern.matcher(check.toLowerCase());
+        Matcher matcher=pattern.matcher(check);
         if(!matcher.matches())
             return null;
         check=check.substring(6);
@@ -380,13 +380,13 @@ public class Parser {
         {
             arrOfStr[j]=arrOfStr[j].trim();
             Pattern pattern1=Pattern.compile("[\\w]+[\\s]+(int|varchar)");
-            Matcher matcher1=pattern1.matcher(arrOfStr[j].toLowerCase());
+            Matcher matcher1=pattern1.matcher(arrOfStr[j]);
             if(!matcher1.matches())
                 return null;
             String Name=arrOfStr[j].substring(0,arrOfStr[j].indexOf(" "));
-            if(arrOfStr[j].toLowerCase().contains("int")){
+            if(arrOfStr[j].contains("int")){
                 output.put(Name,"int");
-            }else if(arrOfStr[j].toLowerCase().contains("varchar")){
+            }else if(arrOfStr[j].contains("varchar")){
                 output.put(Name,"varchar");
             }
         }
@@ -396,7 +396,7 @@ public class Parser {
         input=input.trim();
         Map<String,Object> output=new HashMap<>();
         Pattern pattern = Pattern.compile("(drop)[\\s]+(table)[\\s]+[\\w]+[\\s]*");
-        Matcher matcher=pattern.matcher(input.toLowerCase());
+        Matcher matcher=pattern.matcher(input);
         if(!matcher.matches())
             return null;
         input=input.substring(0,input.length()-1);
