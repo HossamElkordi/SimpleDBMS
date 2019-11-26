@@ -196,6 +196,7 @@ public class Parser {
     }
 
    public Map<String,Object> insertQueryParser(String input){
+	    System.out.println(input.toLowerCase());
         input=input.replace(")"," ) ");
         input= input.replace("("," ( ");
         input=input.replace(","," , ");
@@ -205,6 +206,7 @@ public class Parser {
                         "(([^,\\s]+)|(['][^']+['])))*[\\s]*[\\)][\\s]*)|([\\s]*(values)[\\s]*+[\\s]*[\\(][\\s]*(([^\\s,\\(\\)]+)" +
                         "|(['][^']+[']))([\\s]*[,][\\s]*(([^,\\s\\(\\)]+)|(['][^']+['])))*[\\s]*[\\)][\\s]*))"
         );
+        input=input.toLowerCase();
         Matcher z=a.matcher(input);
         if(!z.matches())return null;
         else{input=input.substring(0,input.length()-1);}
