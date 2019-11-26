@@ -142,8 +142,6 @@ public class MyDatabase implements Database {
 
 		if(table != null)
 		{
-			cache.retrieveFromCache((String) map.get("table"));
-			cache.addToCache(table);
 			return table.SelectRecord(this.condition,names);
 		}
 		throw new SQLException("Table doesn't exist");
@@ -164,8 +162,6 @@ public class MyDatabase implements Database {
 			if((table != null) && (colVals.size() != 0))
 			{
 				updatedRows = table.updateRecord(this.colVals, this.condition);
-				cache.retrieveFromCache((String) map.get("table"));
-				cache.addToCache(table);
 			}
 		}
 		else if(TypeChecker==6){
@@ -178,8 +174,6 @@ public class MyDatabase implements Database {
 			if((table != null) && (colVals.size() == 0))
 			{
 				updatedRows = table.deleteRecord(this.condition);
-				cache.retrieveFromCache((String) map.get("table"));
-				cache.addToCache(table);
 			}
 		}
 		else if (TypeChecker==7){
@@ -191,9 +185,7 @@ public class MyDatabase implements Database {
 			//(you also need to check if a database with this name exists)
 			if((table != null) && (colVals.size() != 0))
 			{
-				updatedRows = table.addRecord(this.colVals);
-				cache.retrieveFromCache((String) map.get("table"));
-				cache.addToCache(table);
+				updatedRows = table.addRecord(this.colVals);;
 			}
 		}
 		return updatedRows;
