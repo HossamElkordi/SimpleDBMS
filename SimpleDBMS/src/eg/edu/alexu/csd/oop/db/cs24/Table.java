@@ -262,6 +262,8 @@ public class Table {
 	
 	private ArrayList<String> getColsNeeded(ArrayList<String> condition) {
 		ArrayList<String> cols = new ArrayList<String>();
+		if(condition==null)
+			return null;
 		for (int i = 0; i < (condition.size() + 1)/4; i++) {
 			cols.add(condition.get((3 * i) + i));
 		}
