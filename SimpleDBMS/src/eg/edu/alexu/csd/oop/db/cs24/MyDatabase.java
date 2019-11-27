@@ -317,7 +317,7 @@ public class MyDatabase implements Database {
 		return false;
 	}
 
-	public static void delete(File file) {
+	private static void delete(File file) {
 
 		if(file.isDirectory()){
 			if(file.list().length==0)

@@ -7,8 +7,7 @@ import java.util.regex.Pattern;
 public class ConditionParser {
  
     private static ConditionParser cp;
- 
-    Pattern mainPattern=Pattern.compile("");
+
  
     private ConditionParser() {
  
@@ -76,7 +75,7 @@ public class ConditionParser {
         }
         return false;
     }
-    ArrayList<String> sublist(ArrayList<String> input,int start,int finish){
+    public ArrayList<String> sublist(ArrayList<String> input,int start,int finish){
         ArrayList<String> op = new ArrayList<String>();
         while(start<finish){
             op.add(input.get(start));
@@ -85,7 +84,7 @@ public class ConditionParser {
         return op;
     }
  
-    boolean conditionChecker(ArrayList<String> a){
+    public boolean conditionChecker(ArrayList<String> a){
         if(a.size()<3)return false;
         int i=0;
         while(i<a.size()){

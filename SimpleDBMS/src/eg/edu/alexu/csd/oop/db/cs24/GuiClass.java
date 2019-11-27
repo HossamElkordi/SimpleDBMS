@@ -20,7 +20,7 @@ public class GuiClass {
 
 	private JFrame frame;
 	private JTable table;
-	JTextArea commandArea;
+	private JTextArea commandArea;
 	private DefaultTableModel model;
 	private JLabel updaredRowslbl;
 	

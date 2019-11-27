@@ -24,7 +24,7 @@ import org.xml.sax.SAXException;
 
 public class Table {
 	
-	ConditionParser cp = ConditionParser.getInstance();
+	private ConditionParser cp = ConditionParser.getInstance();
 	
 	private XML parseXML;
 	private Document doc;
