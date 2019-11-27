@@ -7,7 +7,7 @@ public class CommandChecker {
 	
 	private MyDatabase db;
 	
-	private static Object[][] columnsNames;
+	private static String[] columnsNames;
 	private Object[][] dataSet;
 	
 	public CommandChecker() {
@@ -19,7 +19,7 @@ public class CommandChecker {
 		if(command.contains("create") || command.contains("drop")) {
 			
 			if(db.executeStructureQuery(command)) {
-				// columnsNames should have been set from the parser
+				
 				dataSet = new Object[0][0];
 			}
 			
@@ -38,14 +38,14 @@ public class CommandChecker {
 		return dataSet;
 	}
 
-	public Object[][] getColumnsNames() {
+	public String[] getColumnsNames() {
 		return columnsNames;
 	}
 	
 	public static void setColumnsNames(ArrayList<String> columnNames) {
-		columnsNames = new Object[1][columnNames.size()];
+		columnsNames = new String[columnNames.size()];
 		for (int i = 0; i < columnsNames.length; i++) {
-			columnsNames[0][i] = columnNames.get(i);
+			columnsNames[i] = columnNames.get(i);
 		}
 	}
 	
