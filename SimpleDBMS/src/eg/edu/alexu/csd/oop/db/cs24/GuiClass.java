@@ -75,19 +75,20 @@ public class GuiClass {
 		for (int i = 0; i < count; i++) {
 			model.removeRow(0);
 		}
-		Object[][] colName = comCheck.getColumnsNames();
-		if(colName != null) {
-			String[] st = new String[colName[0].length];
-			for (int i = 0; i < colName[0].length; i++) {
-				st[i] = (String)colName[0][i];
-			}
-		}
-		model.setColumnIdentifiers(new String[0]);
 		Object[][] data = comCheck.getDataSet();
 		if (data != null) {
 			for (int i = 0; i < data.length; i++) {
 				model.addRow(data[i]);
 			} 
+		}		Object[][] colName = comCheck.getColumnsNames();
+		if(colName != null) {
+			String[] st = new String[colName[0].length];
+			for (int i = 0; i < colName[0].length; i++) {
+				st[i] = (String)colName[0][i];
+			}
+			model.setColumnIdentifiers(st);
+		}else {
+			model.setColumnIdentifiers(new String[0]);
 		}
 	}
 
