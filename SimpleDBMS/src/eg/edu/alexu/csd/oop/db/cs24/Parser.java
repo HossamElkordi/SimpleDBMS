@@ -320,7 +320,7 @@ public class Parser {
         Matcher matcher=pattern.matcher(input);
         if(!matcher.matches())
             return null;
-        input=input.substring(0,input.length()-1);
+        input=input.substring(0,input.length());
         input.trim();
         input=input.substring(6);
         input=input.trim();
@@ -336,7 +336,7 @@ public class Parser {
         Matcher matcher=pattern.matcher(input);
         if(!matcher.matches())
             return null;
-        input=input.substring(0,input.length()-1);
+        input=input.substring(0,input.length());
         input.trim();
         input=input.substring(4);
         input=input.trim();
@@ -345,7 +345,7 @@ public class Parser {
         output.put("DataBaseName",input);
         return output;
     }
-    public Map<String,Object> createtable(String input){
+    public ArrayList<String> createtable(String input){
         input=input.trim();
         /*if(input.charAt(input.length()-1)!=';'){
             return null;
@@ -357,7 +357,7 @@ public class Parser {
             return null;
         String check=input.substring(0,i);
         check=check.trim();
-        Map<String,Object> output=new HashMap<>();
+        ArrayList<String> output=new ArrayList<String>();
         Pattern pattern = Pattern.compile("(create)[\\s]+(table)[\\s]+[\\w]+");
         Matcher matcher=pattern.matcher(check);
         if(!matcher.matches())
@@ -366,7 +366,7 @@ public class Parser {
         check=check.trim();
         check=check.substring(5);
         check=check.trim();
-        output.put("tableName",check);
+        output.add(check);
         String check2=input.substring(i+1,input.lastIndexOf(")"));
         check2=check2.trim();
         String[] arrOfStr = check2.split(",");
@@ -387,9 +387,9 @@ public class Parser {
                 return null;
             String Name=arrOfStr[j].substring(0,arrOfStr[j].indexOf(" "));
             if(arrOfStr[j].contains("int")){
-                output.put(Name,"int");
+                output.add(Name + ", int");
             }else if(arrOfStr[j].contains("varchar")){
-                output.put(Name,"varchar");
+                output.add(Name + ", varchar");
             }
         }
         return output;

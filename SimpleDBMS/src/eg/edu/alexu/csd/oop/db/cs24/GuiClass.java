@@ -11,20 +11,18 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.UIManager;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.text.BadLocationException;
 
 public class GuiClass {
 
 	private JFrame frame;
 	private JTable table;
+	JTextArea commandArea;
 	private DefaultTableModel model;
 	
 	private CommandChecker comCheck;
 	
-	private String command = "";
+	private String document = "";
 
 	/**
 	 * Launch the application.
@@ -78,14 +76,18 @@ public class GuiClass {
 			model.removeRow(0);
 		}
 		Object[][] colName = comCheck.getColumnsNames();
-		String[] st = new String[colName[0].length];
-		for (int i = 0; i < colName[0].length; i++) {
-			st[i] = (String)colName[0][i];
+		if(colName != null) {
+			String[] st = new String[colName[0].length];
+			for (int i = 0; i < colName[0].length; i++) {
+				st[i] = (String)colName[0][i];
+			}
 		}
-		model.setColumnIdentifiers(st);
+		model.setColumnIdentifiers(new String[0]);
 		Object[][] data = comCheck.getDataSet();
-		for (int i = 0; i < data.length; i++) {
-			model.addRow(data[i]);
+		if (data != null) {
+			for (int i = 0; i < data.length; i++) {
+				model.addRow(data[i]);
+			} 
 		}
 	}
 
@@ -94,41 +96,24 @@ public class GuiClass {
 		commandScrollPane.setBounds(10, 61, 239, 159);
 		frame.getContentPane().add(commandScrollPane);
 		
-		JTextArea commandArea = new JTextArea();
+		commandArea = new JTextArea();
 		commandScrollPane.setViewportView(commandArea);
 		commandArea.setTabSize(5);
 		commandArea.setLineWrap(true);
 		commandArea.setFont(new Font("Courier New", Font.PLAIN, 13));
 		commandArea.setWrapStyleWord(true);
-		commandArea.getDocument().addDocumentListener(new DocumentListener() {
-
-			public void insertUpdate(DocumentEvent e) {
-				try {
-					command += e.getDocument().getText(e.getOffset(), e.getLength());
-				} catch (BadLocationException e1) {
-					e1.printStackTrace();
-				}				
-			}
-
-			public void removeUpdate(DocumentEvent e) {
-				command = command.substring(0, command.length() - e.getLength());				
-			}
-
-			public void changedUpdate(DocumentEvent e) {				
-			}
-			
-		});
 		
 		JButton btnEnter = new JButton("Enter");
 		btnEnter.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					comCheck.directCommand(command);
+					int count = document.length();
+					document = commandArea.getText().replaceAll("\n", "");
+					comCheck.directCommand(document.substring(count));
 					setTableModel();
 				} catch (SQLException e1) {
 					e1.printStackTrace();
 				}
-				command = "";
 			}
 		});
 		btnEnter.setBounds(80, 235, 89, 23);

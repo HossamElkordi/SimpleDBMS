@@ -30,7 +30,9 @@ public class MyDatabase implements Database {
 
 			public void run() {
 				cache.clearCache();
-				table.writeInFile();
+				if (table != null) {
+					table.writeInFile();
+				}
 			}
 			
 		}));
@@ -79,24 +81,18 @@ public class MyDatabase implements Database {
 
 		}
 		else if(TypeChecker==1){//create table
-			map= (HashMap<String, Object>) parser.createtable(query.toLowerCase());
-			if(map==null){throw new SQLException("syntax error");}
+			ArrayList<String> map1= parser.createtable(query.toLowerCase());
+			if(map1==null){throw new SQLException("syntax error");}
 			//at this point the query is correct and tha map contains the table's name and field/type (key,value pair)
-			ArrayList<String>columns=new ArrayList<>();
-			tableName=(String)map.get("tableName");
-			map.remove("tableName");
-            Iterator<Entry<String, Object>> it = map.entrySet().iterator();
-			while(it.hasNext())
-			{
-					Map.Entry<String, Object> pair = (Map.Entry<String, Object>)it.next();
-					columns.add( pair.getKey()+ ", "+pair.getValue());
-			}
+			tableName=map1.get(0);
+			map1.remove(0);
+
 			File NewTable =new File(dbsPath+System.getProperty("file.separator")+dbName+System.getProperty("file.separator")+tableName+".xml");
 			if(dbName!="")
 			{
 				if(!NewTable.exists())
 				{
-					table=new Table(tableName,columns);
+					table=new Table(tableName,map1);
 					table.setPath(dbsPath+System.getProperty("file.separator")+dbName+System.getProperty("file.separator")+tableName+".xml");
 					table.createXML();
 					cache.addToCache(table);
