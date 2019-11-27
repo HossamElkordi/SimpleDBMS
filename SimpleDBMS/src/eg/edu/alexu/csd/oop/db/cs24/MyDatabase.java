@@ -210,6 +210,7 @@ public class MyDatabase implements Database {
 			this.colVals = null;
 			return;
 		}
+		this.colVals.clear();
 		if (map.size() == table.getColumns().size()) {
 			if (map.get("" + 0) == null) {
 				Set<?> set = map.entrySet();
@@ -246,6 +247,7 @@ public class MyDatabase implements Database {
 		Iterator<?> iter = set.iterator();
 		if(table==null)
 			throw new SQLException("Null table");
+		this.colVals.clear();
 		while(iter.hasNext()) {
 			Map.Entry<String, String> m = (Map.Entry<String, String>) iter.next();
 			if(!columnMatchValue(this.table.getColumnByName(m.getKey()), m.getValue())) {
