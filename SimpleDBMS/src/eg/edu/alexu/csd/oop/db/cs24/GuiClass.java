@@ -107,12 +107,32 @@ public class GuiClass {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					int count = document.length();
+					String oldDoc = document;
 					document = commandArea.getText().replaceAll("\n", "");
-					comCheck.directCommand(document.substring(count));
+					if(document.lastIndexOf(oldDoc, 0) != -1) {
+						comCheck.directCommand(document.substring(count));
+					}else {
+						comCheck.directCommand(document.substring(getCommandStartIndex(oldDoc)));
+					}
 					setTableModel();
 				} catch (SQLException e1) {
 					e1.printStackTrace();
 				}
+			}
+
+			/**
+			 * @param oldDoc
+			 * @return
+			 */
+			private int getCommandStartIndex(String oldDoc) {
+				int start = 0;
+				for (int i = 0; i < document.length(); i++) {
+					if(oldDoc.charAt(i) != document.charAt(i)) {
+						start = i;
+						break;
+					}
+				}
+				return start;
 			}
 		});
 		btnEnter.setBounds(80, 235, 89, 23);
