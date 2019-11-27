@@ -132,7 +132,7 @@ public class ConditionParser {
 						((condition.get(0).compareTo(condition.get(2)) > 0) && ((condition.get(1).equals(">")) || condition.get(1).equals(">=")));
 				
 			}else {
-				return condition.get(1).equals("=");
+				return condition.get(1).equals("=") || condition.get(1).equals("<=") || condition.get(1).equals(">=");
 			}
 		}
 		if(Pattern.matches(INT_REGEX, condition.get(0)) && Pattern.matches(INT_REGEX, condition.get(2))) {
@@ -142,10 +142,10 @@ public class ConditionParser {
 				if(condition.get(1).equals("<>")) {
 					return true;
 				}
-				return ((num1 > num2) && (condition.get(1).contentEquals(">") || condition.get(1).contentEquals(">="))) ||
-						((num1 < num2) && (condition.get(1).contentEquals("<") || condition.get(1).contentEquals("<=")));
+				return ((num1 > num2) && ((condition.get(1).equals(">")) || condition.get(1).equals(">="))) ||
+						((num1 < num2) && ((condition.get(1).equals("<")) || condition.get(1).equals("<=")));
 			}else {
-				return condition.get(1).equals("=");
+				return condition.get(1).equals("=") || condition.get(1).equals("<=") || condition.get(1).equals(">=");
 			}
 		}
 		return false;

@@ -13,6 +13,8 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.JLabel;
+import javax.swing.SwingConstants;
 
 public class GuiClass {
 
@@ -20,6 +22,7 @@ public class GuiClass {
 	private JTable table;
 	JTextArea commandArea;
 	private DefaultTableModel model;
+	private JLabel updaredRowslbl;
 	
 	private CommandChecker comCheck;
 	
@@ -35,7 +38,6 @@ public class GuiClass {
 			GuiClass window = new GuiClass();
 			window.frame.setVisible(true);
 		} catch (Exception e) {
-			JOptionPane.showMessageDialog(null, "Syntax Error!");
 			e.printStackTrace();
 		}
 			
@@ -116,28 +118,34 @@ public class GuiClass {
 					}else {
 						comCheck.directCommand(document.substring(getCommandStartIndex(oldDoc)));
 					}
+					updaredRowslbl.setText("Number of updated rows: " + comCheck.getUpdatedRows());
 					setTableModel();
 				} catch (SQLException e1) {
 					e1.printStackTrace();
 				}
 			}
-
-			/**
-			 * @param oldDoc
-			 * @return
-			 */
-			private int getCommandStartIndex(String oldDoc) {
-				int start = 0;
-				for (int i = 0; i < document.length(); i++) {
-					if(oldDoc.charAt(i) != document.charAt(i)) {
-						start = i;
-						break;
-					}
-				}
-				return start;
-			}
 		});
-		btnEnter.setBounds(80, 235, 89, 23);
+		btnEnter.setBounds(80, 231, 89, 23);
 		frame.getContentPane().add(btnEnter);
+		
+		setLabel();
+	}
+
+	private void setLabel() {
+		updaredRowslbl = new JLabel("Number of updated rows: 0");
+		updaredRowslbl.setHorizontalAlignment(SwingConstants.CENTER);
+		updaredRowslbl.setBounds(10, 282, 240, 23);
+		frame.getContentPane().add(updaredRowslbl);
+	}
+	
+	private int getCommandStartIndex(String oldDoc) {
+		int start = 0;
+		for (int i = 0; i < document.length(); i++) {
+			if(oldDoc.charAt(i) != document.charAt(i)) {
+				start = i;
+				break;
+			}
+		}
+		return start;
 	}
 }

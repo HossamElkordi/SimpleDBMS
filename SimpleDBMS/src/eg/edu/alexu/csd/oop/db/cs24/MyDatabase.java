@@ -5,6 +5,8 @@ import java.sql.SQLException;
 import java.util.*;
 import java.util.Map.Entry;
 
+import javax.swing.JOptionPane;
+
 
 
 public class MyDatabase implements Database {
@@ -63,26 +65,18 @@ public class MyDatabase implements Database {
 	public boolean executeStructureQuery(String query) throws SQLException {//the one that deals with create and drop
 		HashMap<String,Object> map;
 		int TypeChecker=parser.typechecker(query.toLowerCase());
-		if(TypeChecker==-1){throw new SQLException("syntax error");}
+		if(TypeChecker==-1){JOptionPane.showMessageDialog(null, "Syntax Error!"); throw new SQLException("syntax error");}
 		else if(TypeChecker==0){//create database
 			map= (HashMap<String, Object>) parser.createdatabase(query.toLowerCase());
-			if(map==null){throw new SQLException("syntax error");}
+			if(map==null){JOptionPane.showMessageDialog(null, "Syntax Error!"); throw new SQLException("syntax error");}
 			//at this point the query is correct and tha map contains the database's name
 			if(createDatabase(map.get("DataBaseName").toString(), true).equals(dbsPath+System.getProperty("file.separator")+dbName)) {
 				return true;
 			}
-//			dbName= (String) map.get("DataBaseName");
-//			File NewDatabase =new File(dbsPath+System.getProperty("file.separator")+dbName);
-//			if(!NewDatabase.exists()||Drop)
-//			{
-//				NewDatabase.mkdirs();
-//				return true;
-//			}
-
 		}
 		else if(TypeChecker==1){//create table
 			ArrayList<String> map1= parser.createtable(query.toLowerCase());
-			if(map1==null){throw new SQLException("syntax error");}
+			if(map1==null){JOptionPane.showMessageDialog(null, "Syntax Error!"); throw new SQLException("syntax error");}
 			//at this point the query is correct and tha map contains the table's name and field/type (key,value pair)
 			tableName=map1.get(0);
 			map1.remove(0);
@@ -100,16 +94,13 @@ public class MyDatabase implements Database {
 				}
 				else
 					return false;
-					/*table=xmlParser.LoadTable(dbsPath+System.getProperty("file.separator")+dbName+System.getProperty("file.separator")+tableName);
-					cache.retrieveFromCache(tableName);
-					cache.addToCache(table);
-					return true;*/
 			}
+			JOptionPane.showMessageDialog(null, "Syntax Error!");
 			throw new SQLException("No Table found");
 		}
 		else if(TypeChecker==2){//drop database
 			map= (HashMap<String, Object>) parser.dropdatabase(query.toLowerCase());
-			if(map==null){throw new SQLException("syntax error");}
+			if(map==null){JOptionPane.showMessageDialog(null, "Syntax Error!"); throw new SQLException("syntax error");}
 			//at this point the query is correct and tha map contains the database's name(you also need to check if a database with this name exists)
 			File database=new File(dbsPath+System.getProperty("file.separator")+dbName);
 			if(database.exists())
@@ -120,7 +111,7 @@ public class MyDatabase implements Database {
 		}
 		else if(TypeChecker==3){//drop table
 			map= (HashMap<String, Object>) parser.droptable(query.toLowerCase());
-			if(map==null){throw new SQLException("syntax error");}
+			if(map==null){JOptionPane.showMessageDialog(null, "Syntax Error!"); throw new SQLException("syntax error");}
 			//at this point the query is correct and tha map contains the table's name(you also need to check if a database with this name exists)
 			File Table =new File(dbsPath+System.getProperty("file.separator")+dbName+System.getProperty("file.separator")+map.get("tableName")+".xml");
 			File DTD =new File(dbsPath+System.getProperty("file.separator")+dbName+System.getProperty("file.separator")+map.get("tableName")+".dtd");
@@ -130,8 +121,6 @@ public class MyDatabase implements Database {
 			    DTD.delete();
 			    if(map.get("tableName").equals(tableName))
 			    	table=null;
-				//delete(Table);
-				//delete(DTD);
 				cache.retrieveFromCache((String) map.get("tableName"));
 				return true;
 			}
@@ -142,17 +131,15 @@ public class MyDatabase implements Database {
 	public Object[][] executeQuery(String query) throws SQLException {//the one that deals with select
 		HashMap<String,Object> map=new HashMap<>();
 		map=(HashMap<String, Object>) parser.selectQueryParser(query.toLowerCase());
-		if(map==null){throw new SQLException("syntax error");}
+		if(map==null){JOptionPane.showMessageDialog(null, "Syntax Error!"); throw new SQLException("syntax error");}
 		ArrayList<String> names = selectMapDecomposer(map);
-		if(names.size()==0){throw new SQLException("syntax error");}
-		//at this point map contains 1)table==>(String)tablename  2)fields==>(Arraylist<Strings> contains the field to be shown or * if all the fields are to be show
-		//3)condition==>Arraylist<String>condition that contains the conditions or null if there isn't any
-		//(you also need to check if a database with this name exists)
-
+		if(names.size()==0){JOptionPane.showMessageDialog(null, "Syntax Error!"); throw new SQLException("syntax error");}
+		
 		if(table != null)
 		{
 			return table.SelectRecord(this.condition,names);
 		}
+		JOptionPane.showMessageDialog(null, "Table doesn't exist!");
 		throw new SQLException("Table doesn't exist");
 	}
 
@@ -160,12 +147,12 @@ public class MyDatabase implements Database {
 		HashMap<String ,Object>map;
 		int updatedRows = 0;
 		int TypeChecker=parser.typechecker(query.toLowerCase());
-		if(TypeChecker==-1){throw new SQLException("syntax error");}
+		if(TypeChecker==-1){JOptionPane.showMessageDialog(null, "Syntax Error!"); throw new SQLException("syntax error");}
 		else if(TypeChecker==5){
 			map=(HashMap<String, Object>) parser.updateQueryParser(query.toLowerCase());
-			if(map==null){throw new SQLException("syntax error");}
+			if(map==null){JOptionPane.showMessageDialog(null, "Syntax Error!"); throw new SQLException("syntax error");}
 			updateMapDecomposer(map);
-			if(colVals.size()==0){throw new SQLException("syntax error");}
+			if(colVals.size()==0){JOptionPane.showMessageDialog(null, "Syntax Error!"); throw new SQLException("syntax error");}
 			//at this point you know that the update query has no errors ask hossam to know what is stored where
 			//(you also need to check if a database with this name exists)
 			if((table != null) && (colVals.size() != 0))
@@ -175,9 +162,9 @@ public class MyDatabase implements Database {
 		}
 		else if(TypeChecker==6){
 			map=(HashMap<String, Object>) parser.deleteQueryParser(query.toLowerCase());
-			if(map==null){throw new SQLException("syntax error");}
+			if(map==null){JOptionPane.showMessageDialog(null, "Syntax Error!"); throw new SQLException("syntax error");}
 			deleteMapDecomposer(map);
-			if(colVals.size()!=0){throw new SQLException("syntax error");}
+			if(colVals.size()!=0){JOptionPane.showMessageDialog(null, "Syntax Error!"); throw new SQLException("syntax error");}
 			//at this point you know that the delete query has no errors ask hossam to know what is stored where
 			//(you also need to check if a database with this name exists)
 			if((table != null) && (colVals.size() == 0))
@@ -187,9 +174,9 @@ public class MyDatabase implements Database {
 		}
 		else if (TypeChecker==7){
 			map=(HashMap<String, Object>) parser.insertQueryParser(query.toLowerCase());
-			if(map==null){throw new SQLException("syntax error");}
+			if(map==null){JOptionPane.showMessageDialog(null, "Syntax Error!"); throw new SQLException("syntax error");}
 			addMapDecomposer(map);
-			if(colVals.size()==0){throw new SQLException("syntax error");}
+			if(colVals.size()==0){JOptionPane.showMessageDialog(null, "Syntax Error!"); throw new SQLException("syntax error");}
 			//at this point you know that the insert query has no errors ask hossam to know what is stored where
 			//(you also need to check if a database with this name exists)
 			if((table != null) && (colVals.size() != 0))
